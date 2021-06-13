@@ -199,7 +199,24 @@ void Processor_DecodeAndExecuteInstruction() {
 		case IRET_INST: // Return from a interrupt handle manager call
 			registerPC_CPU=Processor_CopyFromSystemStack(MAINMEMORYSIZE-1);
 			registerPSW_CPU=Processor_CopyFromSystemStack(MAINMEMORYSIZE-2);
-			break;		
+			break;	
+
+		// Instruction MEMADD (V1.0)
+		case MEMADD_INST:
+			//-----------------COPIA READ-----------------------
+			registerMAR_CPU=operand2;
+			// Send to the MMU controller the address in which the reading has to take place: use the address bus for this
+			Buses_write_AddressBus_From_To(CPU, MMU);
+			// Tell the MMU controller to read
+			registerCTRL_CPU=CTRLREAD;
+			Buses_write_ControlBus_From_To(CPU,MMU);
+			//----------------FIN READ--------------------------
+			// Sumar la posicion de memoria y 
+			registerAccumulator_CPU= operand1 + registerMBR_CPU.cell;
+			registerPC_CPU++;
+			break;
+
+
 
 		// Unknown instruction
 		default : 
