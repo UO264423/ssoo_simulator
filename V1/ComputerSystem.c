@@ -17,6 +17,7 @@ PROGRAMS_DATA *programList[PROGRAMSMAXNUMBER];
 // Students messages 
 char STUDENT_MESSAGES_FILE[MAXIMUMLENGTH]="messagesSTD.txt";
 
+
 // Powers on of the Computer System.
 void ComputerSystem_PowerOn(int argc, char *argv[], int paramIndex) {
 
@@ -35,12 +36,18 @@ void ComputerSystem_PowerOn(int argc, char *argv[], int paramIndex) {
 	// Prepare if necesary the assert system
 	Asserts_LoadAsserts();
 
+	//Ejercicio V1.2
+	ComputerSystem_PrintProgramList();
+
+
 	// Request the OS to do the initial set of tasks. The last one will be
 	// the processor allocation to the process with the highest priority
 	OperatingSystem_Initialize(daemonsBaseIndex);
 	
 	// Tell the processor to begin its instruction cycle 
 	Processor_InstructionCycleLoop();
+
+	
 	
 }
 
@@ -53,3 +60,14 @@ void ComputerSystem_PowerOff() {
 
 /////////////////////////////////////////////////////////
 //  New functions below this line  //////////////////////
+
+//Ejercicio V0.1
+void ComputerSystem_PrintProgramList(){
+	ComputerSystem_DebugMessage(99,SHUTDOWN,"END of the simulation\n");
+	ComputerSystem_DebugMessage(101,INIT,"User program list:\n");
+	ComputerSystem_DebugMessage(99,SHUTDOWN,"END of the simulation\n");
+	ComputerSystem_DebugMessage(99,SHUTDOWN,"END of the simulation\n");
+	for (int i=1; programList[i]!=NULL && i<PROGRAMSMAXNUMBER ; i++) {
+		ComputerSystem_DebugMessage(101,INIT,programList[i]->executableName,programList[i]->arrivalTime);
+	}
+}
