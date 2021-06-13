@@ -36,9 +36,9 @@ void ComputerSystem_PowerOn(int argc, char *argv[], int paramIndex) {
 	// Prepare if necesary the assert system
 	Asserts_LoadAsserts();
 
+	
 	//Ejercicio V1.2
 	ComputerSystem_PrintProgramList();
-
 
 	// Request the OS to do the initial set of tasks. The last one will be
 	// the processor allocation to the process with the highest priority
@@ -63,11 +63,8 @@ void ComputerSystem_PowerOff() {
 
 //Ejercicio V0.1
 void ComputerSystem_PrintProgramList(){
-	ComputerSystem_DebugMessage(99,SHUTDOWN,"END of the simulation\n");
-	ComputerSystem_DebugMessage(101,INIT,"User program list:\n");
-	ComputerSystem_DebugMessage(99,SHUTDOWN,"END of the simulation\n");
-	ComputerSystem_DebugMessage(99,SHUTDOWN,"END of the simulation\n");
+	ComputerSystem_DebugMessage(101,SHUTDOWN,"User program list:\n");
 	for (int i=1; programList[i]!=NULL && i<PROGRAMSMAXNUMBER ; i++) {
-		ComputerSystem_DebugMessage(101,INIT,programList[i]->executableName,programList[i]->arrivalTime);
+		ComputerSystem_DebugMessage(101,SHUTDOWN,programList[i]->executableName,programList[i]->arrivalTime);
 	}
 }
