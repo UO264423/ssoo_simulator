@@ -38,7 +38,8 @@ int executingProcessID=NOPROCESS;
 int sipID;
 
 // Initial PID for assignation
-int initialPID=0;
+//Ejercicio v1.8
+int initialPID=PROCESSTABLEMAXSIZE-1;
 
 // Begin indes for daemons in programList
 int baseDaemonsInProgramList; 
@@ -141,6 +142,11 @@ int OperatingSystem_LongTermScheduler() {
 			ComputerSystem_DebugMessage(104,ERROR,programList[i]->executableName, "invalid priority or size");
 		}
 
+		//V1.6.B
+		if(PID == TOOBIGPROCESS){
+			ComputerSystem_DebugMessage(105,ERROR,programList[i]->executableName);
+		}
+
 
 		if (programList[i]->type==USERPROGRAM) 
 			numberOfNotTerminatedUserProcesses++;
@@ -160,6 +166,7 @@ int OperatingSystem_CreateProcess(int indexOfExecutableProgram) {
 	int processSize;
 	int loadingPhysicalAddress;
 	int priority;
+	int loadProgram;
 	FILE *programFile;
 	PROGRAMS_DATA *executableProgram=programList[indexOfExecutableProgram];
 
@@ -197,9 +204,18 @@ int OperatingSystem_CreateProcess(int indexOfExecutableProgram) {
 	// Obtain enough memory space
  	loadingPhysicalAddress=OperatingSystem_ObtainMainMemory(processSize, PID);
 
+	//Ejercicio 1.6.b
+	if (loadingPhysicalAddress == TOOBIGPROCESS){
+		return TOOBIGPROCESS;
+	}
+
 	// Load program in the allocated memory
-	OperatingSystem_LoadProgram(programFile, loadingPhysicalAddress, processSize);
-	
+	loadProgram = OperatingSystem_LoadProgram(programFile, loadingPhysicalAddress, processSize);
+	//1.7.a
+	if(loadProgram == TOOBIGPROCESS){
+		return TOOBIGPROCESS;
+	}
+
 	// PCB initialization
 	OperatingSystem_PCBInitialization(PID, loadingPhysicalAddress, processSize, priority, indexOfExecutableProgram);
 	
@@ -208,6 +224,8 @@ int OperatingSystem_CreateProcess(int indexOfExecutableProgram) {
 	
 	return PID;
 }
+
+//Ejercicio 1.9.A
 
 
 // Main memory is assigned in chunks. All chunks are the same size. A process
