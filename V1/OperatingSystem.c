@@ -131,6 +131,11 @@ int OperatingSystem_LongTermScheduler() {
 			ComputerSystem_DebugMessage(103,ERROR,programList[i]->executableName);
 		}
 
+		//V1.5b
+		if(PID == PROGRAMDOESNOTEXIST){
+			ComputerSystem_DebugMessage(104,ERROR,programList[i]->executableName, "--- it does not exist ---");
+		}
+
 		if (programList[i]->type==USERPROGRAM) 
 			numberOfNotTerminatedUserProcesses++;
 		// Move process to the ready state
@@ -160,6 +165,8 @@ int OperatingSystem_CreateProcess(int indexOfExecutableProgram) {
 		return NOFREEENTRY;
 	}
 
+	
+
 	// Check if programFile exists
 	programFile=fopen(executableProgram->executableName, "r");
 	if (programFile==NULL){
@@ -168,6 +175,11 @@ int OperatingSystem_CreateProcess(int indexOfExecutableProgram) {
 
 	// Obtain the memory requirements of the program
 	processSize=OperatingSystem_ObtainProgramSize(programFile);	
+
+	//Ejercicio 1.5.b
+	if(processSize == PROGRAMNOTVALID){
+		return PROGRAMNOTVALID;
+	}
 
 	// Obtain the priority for the process
 	priority=OperatingSystem_ObtainPriority(programFile);
