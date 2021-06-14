@@ -65,6 +65,6 @@ void ComputerSystem_PowerOff() {
 void ComputerSystem_PrintProgramList(){
 	ComputerSystem_DebugMessage(101,SHUTDOWN,"User program list:\n");
 	for (int i=1; programList[i]!=NULL && i<PROGRAMSMAXNUMBER ; i++) {
-		ComputerSystem_DebugMessage(101,SHUTDOWN,programList[i]->executableName,programList[i]->arrivalTime);
+		ComputerSystem_DebugMessage(102,SHUTDOWN,programList[i]->executableName,programList[i]->arrivalTime);
 	}
 }

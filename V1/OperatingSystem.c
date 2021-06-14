@@ -125,6 +125,12 @@ int OperatingSystem_LongTermScheduler() {
 	for (i=0; programList[i]!=NULL && i<PROGRAMSMAXNUMBER ; i++) {
 		PID=OperatingSystem_CreateProcess(i);
 		numberOfSuccessfullyCreatedProcesses++;
+
+		//V1.4b
+		if(PID == NOFREEENTRY){
+			ComputerSystem_DebugMessage(103,ERROR,programList[i]->executableName);
+		}
+
 		if (programList[i]->type==USERPROGRAM) 
 			numberOfNotTerminatedUserProcesses++;
 		// Move process to the ready state
@@ -148,6 +154,11 @@ int OperatingSystem_CreateProcess(int indexOfExecutableProgram) {
 
 	// Obtain a process ID
 	PID=OperatingSystem_ObtainAnEntryInTheProcessTable();
+
+	//Ejercicio 1.4
+	if(PID == NOFREEENTRY){
+		return NOFREEENTRY;
+	}
 
 	// Check if programFile exists
 	programFile=fopen(executableProgram->executableName, "r");
