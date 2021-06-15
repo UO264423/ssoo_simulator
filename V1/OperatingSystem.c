@@ -268,6 +268,7 @@ void OperatingSystem_MoveToTheREADYState(int PID) {
 	if (Heap_add(PID, readyToRunQueue,QUEUE_PRIORITY ,&numberOfReadyToRunProcesses ,PROCESSTABLEMAXSIZE)>=0) {
 		processTable[PID].state=READY;
 	} 
+	OperatingSystem_PrintReadyToRunQueue();
 }
 
 
@@ -414,6 +415,29 @@ void OperatingSystem_InterruptLogic(int entryPoint){
 		case EXCEPTION_BIT: // EXCEPTION_BIT=6
 			OperatingSystem_HandleException();
 			break;
+	}
+}
+//V1.8
+void OperatingSystem_PrintReadyToRunQueue(){
+	//Ready-to-run_processes_queue:
+	ComputerSystem_DebugMessage(106,SHORTTERMSCHEDULE);
+	//Tabulador
+	ComputerSystem_DebugMessage(107,SHORTTERMSCHEDULE);
+	//Comprobamos si la lista esta vacia
+	if(numberOfReadyToRunProcesses==0){
+		//Nueva Linea, sin nada mas
+		ComputerSystem_DebugMessage(108,SHORTTERMSCHEDULE);
+	}
+	else{
+		for(int i=0; i < numberOfReadyToRunProcesses; i++ ){
+			//Distinguimos si es el ultimo elemento o si no, para asi imprimirlo sin coma o no.
+			if(i!= numberOfReadyToRunProcesses-1){
+				ComputerSystem_DebugMessage(109, readyToRunQueue[i].info,readyToRunQueue[i].insertionOrder);
+			}
+			else{
+				ComputerSystem_DebugMessage(110, readyToRunQueue[i].info,readyToRunQueue[i].insertionOrder);
+			}
+		}
 	}
 
 }
