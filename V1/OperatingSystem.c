@@ -24,6 +24,8 @@ int OperatingSystem_ShortTermScheduler();
 int OperatingSystem_ExtractFromReadyToRun();
 void OperatingSystem_HandleException();
 void OperatingSystem_HandleSystemCall();
+//V1.10.a
+char * statesNames [5]={"NEW","READY","EXECUTING","BLOCKED","EXIT"};
 
 // The process table
 PCB processTable[PROCESSTABLEMAXSIZE];
@@ -195,9 +197,6 @@ int OperatingSystem_CreateProcess(int indexOfExecutableProgram) {
 		return PROGRAMNOTVALID;
 	}
 
-
-
-
 	// Obtain the priority for the process
 	priority=OperatingSystem_ObtainPriority(programFile);
 	
@@ -245,6 +244,9 @@ void OperatingSystem_PCBInitialization(int PID, int initialPhysicalAddress, int 
 	processTable[PID].busy=1;
 	processTable[PID].initialPhysicalAddress=initialPhysicalAddress;
 	processTable[PID].processSize=processSize;
+	// V1.10.b
+	ComputerSystem_DebugMessage(111,SYSPROC,PID,programList[processTable[PID].programListIndex]->executableName,"NEW");
+
 	processTable[PID].state=NEW;
 	processTable[PID].priority=priority;
 	processTable[PID].programListIndex=processPLIndex;
@@ -264,9 +266,11 @@ void OperatingSystem_PCBInitialization(int PID, int initialPhysicalAddress, int 
 // Move a process to the READY state: it will be inserted, depending on its priority, in
 // a queue of identifiers of READY processes
 void OperatingSystem_MoveToTheREADYState(int PID) {
-	
 	if (Heap_add(PID, readyToRunQueue,QUEUE_PRIORITY ,&numberOfReadyToRunProcesses ,PROCESSTABLEMAXSIZE)>=0) {
+		//V1.10.b
+		ComputerSystem_DebugMessage(110,SYSPROC,PID,programList[processTable[executingProcessID].programListIndex]->executableName,statesNames[processTable[PID].state],"READY");
 		processTable[PID].state=READY;
+
 	} 
 	OperatingSystem_PrintReadyToRunQueue();
 }
@@ -302,6 +306,8 @@ void OperatingSystem_Dispatch(int PID) {
 
 	// The process identified by PID becomes the current executing process
 	executingProcessID=PID;
+	//V1.10.b
+		ComputerSystem_DebugMessage(110,SYSPROC,PID,programList[processTable[executingProcessID].programListIndex]->executableName,statesNames[processTable[PID].state],"EXECUTING");
 	// Change the process' state
 	processTable[PID].state=EXECUTING;
 	// Modify hardware registers with appropriate values for the process identified by PID
@@ -360,6 +366,9 @@ void OperatingSystem_HandleException() {
 void OperatingSystem_TerminateProcess() {
   
 	int selectedProcess;
+
+	//V1.10.b
+	ComputerSystem_DebugMessage(110,SYSPROC,executingProcessID,programList[processTable[executingProcessID].programListIndex]->executableName,statesNames[processTable[executingProcessID].state],"EXIT");
   	
 	processTable[executingProcessID].state=EXIT;
 	
@@ -424,21 +433,16 @@ void OperatingSystem_PrintReadyToRunQueue(){
 	//Tabulador
 	ComputerSystem_DebugMessage(107,SHORTTERMSCHEDULE);
 	//Comprobamos si la lista esta vacia
-	if(numberOfReadyToRunProcesses==0){
-		//Nueva Linea, sin nada mas
-		ComputerSystem_DebugMessage(108,SHORTTERMSCHEDULE);
-	}
-	else{
+	if(numberOfReadyToRunProcesses!=0){
 		for(int i=0; i < numberOfReadyToRunProcesses; i++ ){
 			//Distinguimos si es el ultimo elemento o si no, para asi imprimirlo sin coma o no.
 			if(i!= numberOfReadyToRunProcesses-1){
-				ComputerSystem_DebugMessage(109, readyToRunQueue[i].info,readyToRunQueue[i].insertionOrder);
+				ComputerSystem_DebugMessage(108, readyToRunQueue[i].info,readyToRunQueue[i].insertionOrder);
 			}
 			else{
-				ComputerSystem_DebugMessage(110, readyToRunQueue[i].info,readyToRunQueue[i].insertionOrder);
+				ComputerSystem_DebugMessage(109, readyToRunQueue[i].info,readyToRunQueue[i].insertionOrder);
 			}
 		}
 	}
-
 }
 
