@@ -18,6 +18,11 @@
 
 #define NOPROCESS -1
 
+// In OperatingSystem.h
+#define NUMBEROFQUEUES 2
+enum TypeOfReadyToRunProcessQueues { USERPROCESSQUEUE, DAEMONSQUEUE};
+
+
 // Contains the possible type of programs
 enum ProgramTypes { USERPROGRAM, DAEMONPROGRAM }; 
 
@@ -37,6 +42,7 @@ typedef struct {
 	int copyOfPCRegister;
 	unsigned int copyOfPSWRegister;
 	int programListIndex;
+	int queueID;
 } PCB;
 
 // These "extern" declaration enables other source code files to gain access
