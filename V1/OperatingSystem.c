@@ -84,12 +84,17 @@ void OperatingSystem_Initialize(int daemonsIndex) {
 	OperatingSystem_PrepareDaemons(daemonsIndex);
 	
 	// Create all user processes from the information given in the command line
-	OperatingSystem_LongTermScheduler();
+	//Se le asigna la variable en el ejercicio V1.15
+	int numberOfProcess = OperatingSystem_LongTermScheduler();
 	
 	if (strcmp(programList[processTable[sipID].programListIndex]->executableName,"SystemIdleProcess")) {
 		// Show red message "FATAL ERROR: Missing SIP program!\n"
 		ComputerSystem_DebugMessage(99,SHUTDOWN,"FATAL ERROR: Missing SIP program!\n");
 		exit(1);		
+	}
+	//Ejercicio V1.15
+	if(numberOfProcess<1){
+		OperatingSystem_ReadyToShutdown();
 	}
 
 	// At least, one user process has been created
@@ -262,6 +267,8 @@ void OperatingSystem_PCBInitialization(int PID, int initialPhysicalAddress, int 
 	processTable[PID].state=NEW;
 	processTable[PID].priority=priority;
 	processTable[PID].programListIndex=processPLIndex;
+	//Ejercicio V1.12
+	processTable[PID].copyOfAccumulator = 0;
 	// Daemons run in protected mode and MMU use real address
 	if (programList[processPLIndex]->type == DAEMONPROGRAM) {
 		processTable[PID].copyOfPCRegister=initialPhysicalAddress;
@@ -341,7 +348,8 @@ void OperatingSystem_RestoreContext(int PID) {
 	// New values for the CPU registers are obtained from the PCB
 	Processor_CopyInSystemStack(MAINMEMORYSIZE-1,processTable[PID].copyOfPCRegister);
 	Processor_CopyInSystemStack(MAINMEMORYSIZE-2,processTable[PID].copyOfPSWRegister);
-	
+	//Ejercicio V1.13
+	Processor_SetAccumulator(processTable[PID].copyOfAccumulator);
 	// Same thing for the MMU registers
 	MMU_SetBase(processTable[PID].initialPhysicalAddress);
 	MMU_SetLimit(processTable[PID].processSize);
@@ -353,7 +361,7 @@ void OperatingSystem_PreemptRunningProcess() {
 
 	// Save in the process' PCB essential values stored in hardware registers and the system stack
 	OperatingSystem_SaveContext(executingProcessID);
-	// Change the process' state
+	// Change the process' state 11.c
 	OperatingSystem_MoveToTheREADYState(executingProcessID,processTable[executingProcessID].queueID);
 	// The processor is not assigned until the OS selects another process
 	executingProcessID=NOPROCESS;
@@ -368,6 +376,9 @@ void OperatingSystem_SaveContext(int PID) {
 	
 	// Load PSW saved for interrupt manager
 	processTable[PID].copyOfPSWRegister=Processor_CopyFromSystemStack(MAINMEMORYSIZE-2);
+
+	//Ejercicio V1.13c
+	processTable[PID].copyOfAccumulator = Processor_GetAccumulator();
 	
 }
 
@@ -416,7 +427,7 @@ void OperatingSystem_TerminateProcess() {
 // System call management routine
 void OperatingSystem_HandleSystemCall() {
   
-	int systemCallID;
+	int systemCallID, queue, nextProcess;
 
 	// Register A contains the identifier of the issued system call
 	systemCallID=Processor_GetRegisterA();
@@ -432,6 +443,25 @@ void OperatingSystem_HandleSystemCall() {
 			ComputerSystem_DebugMessage(73,SYSPROC,executingProcessID,programList[processTable[executingProcessID].programListIndex]->executableName);
 			OperatingSystem_TerminateProcess();
 			break;
+
+		//Ejercicio V1.4
+		case SYSCALL_YIELD:
+			//Porceso en ejecucion
+			queue = processTable[executingProcessID].queueID;
+			nextProcess = Heap_getFirst(readyToRunQueue[queue], numberOfReadyToRunProcesses[queue]);
+			// Si hay algo en la cola
+			if (numberOfReadyToRunProcesses[queue] > 0){
+				//Prioridad del proceso
+				int priorityProcess = processTable[nextProcess].priority; 
+				if (processTable[executingProcessID].priority == priorityProcess){
+					ComputerSystem_DebugMessage(115, SYSPROC, executingProcessID, programList[processTable[executingProcessID].programListIndex]->executableName, nextProcess, programList[processTable[priorityProcess].programListIndex]->executableName);
+					// Detiene el proceso en ejecucion
+					OperatingSystem_PreemptRunningProcess(); 
+					//Nuevo proceso
+					OperatingSystem_Dispatch(OperatingSystem_ShortTermScheduler());
+					}
+				}
+				break;
 	}
 }
 	
