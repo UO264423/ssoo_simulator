@@ -214,6 +214,11 @@ int OperatingSystem_CreateProcess(int indexOfExecutableProgram) {
 		return PROGRAMNOTVALID;
 	}
 
+	//Ejercicio 1.5.c
+	if(processSize == PROGRAMDOESNOTEXIST){
+		return PROGRAMDOESNOTEXIST;
+	}
+
 	// Obtain the priority for the process
 	priority=OperatingSystem_ObtainPriority(programFile);
 	
@@ -508,23 +513,22 @@ void OperatingSystem_PrintReadyToRunQueue(){
 			for(int i=0;i<numberOfReadyToRunProcesses[queue];i++){
 				int priority = processTable[readyToRunQueue[queue][i].info].priority;
 
-				if(i+1==numberOfReadyToRunProcesses[queue]){
-					if(i==0){
+				if(i==0){
+					if((i+1)==numberOfReadyToRunProcesses[queue]){
 						//Si solo hay uno
 						ComputerSystem_DebugMessage(113, SHORTTERMSCHEDULE, readyToRunQueue[queue][i].info, priority);
 					}
 					else{
-						ComputerSystem_DebugMessage(109, SHORTTERMSCHEDULE, readyToRunQueue[queue][i].info, priority);
+						ComputerSystem_DebugMessage(107, SHORTTERMSCHEDULE, readyToRunQueue[queue][i].info, priority);
 					}
 				}
 				else{
-					if(i==0)
+					if((i+1)==numberOfReadyToRunProcesses[queue])
 						//Imprime el proceso como primero.
-						ComputerSystem_DebugMessage(107, SHORTTERMSCHEDULE, readyToRunQueue[queue][i].info, priority);
+						ComputerSystem_DebugMessage(109, SHORTTERMSCHEDULE, readyToRunQueue[queue][i].info, priority);
 					else
 						//Lo imprime con una coma delante, porque es un elemento del medio
 						ComputerSystem_DebugMessage(108, SHORTTERMSCHEDULE, readyToRunQueue[queue][i].info, priority);
-
 				}
 			}
 		}
@@ -533,5 +537,6 @@ void OperatingSystem_PrintReadyToRunQueue(){
 			ComputerSystem_DebugMessage(114, SHORTTERMSCHEDULE, queueNames[queue]);
 		}
 	}
+
 }
 
