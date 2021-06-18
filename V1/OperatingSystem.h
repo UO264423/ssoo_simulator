@@ -18,6 +18,11 @@
 
 #define NOPROCESS -1
 
+// In OperatingSystem.h
+#define NUMBEROFQUEUES 2
+enum TypeOfReadyToRunProcessQueues { USERPROCESSQUEUE, DAEMONSQUEUE};
+
+
 // Contains the possible type of programs
 enum ProgramTypes { USERPROGRAM, DAEMONPROGRAM }; 
 
@@ -25,7 +30,7 @@ enum ProgramTypes { USERPROGRAM, DAEMONPROGRAM };
 enum ProcessStates { NEW, READY, EXECUTING, BLOCKED, EXIT};
 
 // Enumerated type containing the list of system calls and their numeric identifiers
-enum SystemCallIdentifiers { SYSCALL_END=3, SYSCALL_PRINTEXECPID=5};
+enum SystemCallIdentifiers { SYSCALL_END=3,SYSCALL_YIELD=4, SYSCALL_PRINTEXECPID=5};
 
 // A PCB contains all of the information about a process that is needed by the OS
 typedef struct {
@@ -36,7 +41,11 @@ typedef struct {
 	int priority;
 	int copyOfPCRegister;
 	unsigned int copyOfPSWRegister;
+	//Ejerccio V1.13
+	unsigned int copyOfAccumulator;
 	int programListIndex;
+	//Ejercicio V1.11a
+	int queueID;
 } PCB;
 
 // These "extern" declaration enables other source code files to gain access
@@ -50,5 +59,7 @@ void OperatingSystem_Initialize();
 void OperatingSystem_InterruptLogic(int);
 // void OperatingSystem_PrepareDaemons();
 int OperatingSystem_PrepareStudentsDaemons(int);
+void OperatingSystem_PrintReadyToRunQueue();
+void ComputerSystem_PrintProgramList();
 
 #endif
