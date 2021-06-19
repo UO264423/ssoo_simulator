@@ -1,12 +1,20 @@
 #include "Clock.h"
 #include "Processor.h"
-#include "ComputerSystem.h"
+#include "ComputerSystemBase.h"
 
 int tics=0;
 
+
 void Clock_Update() {
+
 	tics++;
-    ComputerSystem_DebugMessage(97,CLOCK,tics);
+    // ComputerSystem_DebugMessage(97,CLOCK,tics);
+	//Ejercicio V2.2c
+	int raise = tics % intervalBetweenInterrupts;
+	//Cada 5 intervalBetween... ticks
+	if(raise == 0){
+		Processor_RaiseInterrupt(CLOCKINT_BIT);
+	}
 }
 
 

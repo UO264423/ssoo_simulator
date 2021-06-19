@@ -62,6 +62,8 @@ void OperatingSystem_Initialize(int daemonsIndex) {
 	FILE *programFile; // For load Operating System Code
 	programFile=fopen("OperatingSystemCode", "r");
 	if (programFile==NULL){
+		//Ejercicio V2.1
+		OperatingSystem_ShowTime(SHUTDOWN);
 		// Show red message "FATAL ERROR: Missing Operating System!\n"
 		ComputerSystem_DebugMessage(99,SHUTDOWN,"FATAL ERROR: Missing Operating System!\n");
 		exit(1);		
@@ -88,6 +90,8 @@ void OperatingSystem_Initialize(int daemonsIndex) {
 	int numberOfProcess = OperatingSystem_LongTermScheduler();
 	
 	if (strcmp(programList[processTable[sipID].programListIndex]->executableName,"SystemIdleProcess")) {
+		//Ejercicio V2.1
+		OperatingSystem_ShowTime(SHUTDOWN);
 		// Show red message "FATAL ERROR: Missing SIP program!\n"
 		ComputerSystem_DebugMessage(99,SHUTDOWN,"FATAL ERROR: Missing SIP program!\n");
 		exit(1);		
@@ -139,24 +143,32 @@ int OperatingSystem_LongTermScheduler() {
 
 		//V1.4b
 		if(PID == NOFREEENTRY){
+			//Ejercicio V2.1
+			OperatingSystem_ShowTime(ERROR);
 			ComputerSystem_DebugMessage(103,ERROR,programList[i]->executableName);
 			OperatingSystem_ReadyToShutdown();
 		}
 
 		//V1.5b
 		else if(PID == PROGRAMDOESNOTEXIST){
+			//Ejercicio V2.1
+			OperatingSystem_ShowTime(ERROR);
 			ComputerSystem_DebugMessage(104,ERROR,programList[i]->executableName, "it does not exist");
 			OperatingSystem_ReadyToShutdown();
 		}
 
 		//V1.5c
 		else if(PID == PROGRAMNOTVALID){
+			//Ejercicio V2.1
+			OperatingSystem_ShowTime(ERROR);
 			ComputerSystem_DebugMessage(104,ERROR,programList[i]->executableName, "invalid priority or size");
 			OperatingSystem_ReadyToShutdown();
 		}
 
 		//V1.6.B
 		else if(PID == TOOBIGPROCESS){
+			//Ejercicio V2.1
+			OperatingSystem_ShowTime(ERROR);
 			ComputerSystem_DebugMessage(105,ERROR,programList[i]->executableName);
 			OperatingSystem_ReadyToShutdown();
 		}
@@ -239,7 +251,8 @@ int OperatingSystem_CreateProcess(int indexOfExecutableProgram) {
 
 	// PCB initialization
 	OperatingSystem_PCBInitialization(PID, loadingPhysicalAddress, processSize, priority, indexOfExecutableProgram);
-	
+	//Ejercicio V2.1
+	OperatingSystem_ShowTime(INIT);
 	// Show message "Process [PID] created from program [executableName]\n"
 	ComputerSystem_DebugMessage(70,INIT,PID,executableProgram->executableName);
 	
@@ -262,10 +275,11 @@ int OperatingSystem_ObtainMainMemory(int processSize, int PID) {
 
 // Assign initial values to all fields inside the PCB
 void OperatingSystem_PCBInitialization(int PID, int initialPhysicalAddress, int processSize, int priority, int processPLIndex) {
-
 	processTable[PID].busy=1;
 	processTable[PID].initialPhysicalAddress=initialPhysicalAddress;
 	processTable[PID].processSize=processSize;
+	//Ejercicio V2.1
+	OperatingSystem_ShowTime(SYSPROC);
 	// V1.10.b
 	ComputerSystem_DebugMessage(111,SYSPROC,PID,programList[processTable[PID].programListIndex]->executableName,"NEW");
 
@@ -291,6 +305,9 @@ void OperatingSystem_PCBInitialization(int PID, int initialPhysicalAddress, int 
 // a queue of identifiers of READY processes
 void OperatingSystem_MoveToTheREADYState(int PID, int queueID) {
 	if (Heap_add(PID, readyToRunQueue[queueID],QUEUE_PRIORITY ,&numberOfReadyToRunProcesses[queueID] ,PROCESSTABLEMAXSIZE)>=0) {
+		//Ejercicio V2.1
+		OperatingSystem_ShowTime(SYSPROC);
+		
 		//V1.10.b
 		ComputerSystem_DebugMessage(110,SYSPROC,PID,programList[processTable[executingProcessID].programListIndex]->executableName,statesNames[processTable[PID].state],"READY");
 		processTable[PID].state=READY;
@@ -338,13 +355,20 @@ void OperatingSystem_Dispatch(int PID) {
 
 	// The process identified by PID becomes the current executing process
 	executingProcessID=PID;
+	//Ejercicio V2.1
+	OperatingSystem_ShowTime(SYSPROC);
 	//V1.10.b
-		ComputerSystem_DebugMessage(110,SYSPROC,PID,programList[processTable[executingProcessID].programListIndex]->executableName,statesNames[processTable[PID].state],"EXECUTING");
+	ComputerSystem_DebugMessage(110,SYSPROC,PID,programList[processTable[executingProcessID].programListIndex]->executableName,statesNames[processTable[PID].state],"EXECUTING");
 	// Change the process' state
 	processTable[PID].state=EXECUTING;
 	// Modify hardware registers with appropriate values for the process identified by PID
 	OperatingSystem_RestoreContext(PID);
 }
+
+// In OperatingSystem.c Exercise 2-b of V2
+void OperatingSystem_HandleClockInterrupt(){ 
+	return; 
+} 
 
 
 // Modify hardware registers with appropriate values for the process identified by PID
@@ -390,6 +414,8 @@ void OperatingSystem_SaveContext(int PID) {
 
 // Exception management routine
 void OperatingSystem_HandleException() {
+	//Ejercicio V2.1
+	OperatingSystem_ShowTime(SYSPROC);
   
 	// Show message "Process [executingProcessID] has generated an exception and is terminating\n"
 	ComputerSystem_DebugMessage(71,SYSPROC,executingProcessID,programList[processTable[executingProcessID].programListIndex]->executableName);
@@ -401,7 +427,10 @@ void OperatingSystem_HandleException() {
 // All tasks regarding the removal of the process
 void OperatingSystem_TerminateProcess() {
   
+	//Ejercicio V2.1
+	OperatingSystem_ShowTime(SYSPROC);
 	int selectedProcess;
+	
 
 	//V1.10.b
 	ComputerSystem_DebugMessage(110,SYSPROC,executingProcessID,programList[processTable[executingProcessID].programListIndex]->executableName,statesNames[processTable[executingProcessID].state],"EXIT");
@@ -416,6 +445,8 @@ void OperatingSystem_TerminateProcess() {
 		if (executingProcessID==sipID) {
 			// finishing sipID, change PC to address of OS HALT instruction
 			OperatingSystem_TerminatingSIP();
+			//Ejercicio V2.1
+			OperatingSystem_ShowTime(SHUTDOWN);
 			ComputerSystem_DebugMessage(99,SHUTDOWN,"The system will shut down now...\n");
 			return; // Don't dispatch any process
 		}
@@ -439,11 +470,15 @@ void OperatingSystem_HandleSystemCall() {
 	
 	switch (systemCallID) {
 		case SYSCALL_PRINTEXECPID:
+			//Ejercicio V2.1
+			OperatingSystem_ShowTime(SYSPROC);
 			// Show message: "Process [executingProcessID] has the processor assigned\n"
 			ComputerSystem_DebugMessage(72,SYSPROC,executingProcessID,programList[processTable[executingProcessID].programListIndex]->executableName);
 			break;
 
 		case SYSCALL_END:
+			//Ejercicio V2.1
+			OperatingSystem_ShowTime(SYSPROC);
 			// Show message: "Process [executingProcessID] has requested to terminate\n"
 			ComputerSystem_DebugMessage(73,SYSPROC,executingProcessID,programList[processTable[executingProcessID].programListIndex]->executableName);
 			OperatingSystem_TerminateProcess();
@@ -459,6 +494,8 @@ void OperatingSystem_HandleSystemCall() {
 				//Prioridad del proceso
 				int priorityProcess = processTable[nextProcess].priority; 
 				if (processTable[executingProcessID].priority == priorityProcess){
+					//Ejercicio V2.1
+					OperatingSystem_ShowTime(SYSPROC);
 					ComputerSystem_DebugMessage(115, SYSPROC, executingProcessID, programList[processTable[executingProcessID].programListIndex]->executableName, nextProcess, programList[processTable[priorityProcess].programListIndex]->executableName);
 					// Detiene el proceso en ejecucion
 					OperatingSystem_PreemptRunningProcess(); 
@@ -478,6 +515,10 @@ void OperatingSystem_InterruptLogic(int entryPoint){
 			break;
 		case EXCEPTION_BIT: // EXCEPTION_BIT=6
 			OperatingSystem_HandleException();
+			break;
+		//Ejercicio V2.2a
+		case CLOCKINT_BIT: // CLOCKINT_BIT=9
+			OperatingSystem_HandleClockInterrupt();
 			break;
 	}
 }
@@ -503,7 +544,10 @@ void OperatingSystem_PrintReadyToRunQueue(){
 	*/
 
 	//Se comenta lo de arriba para el EJERCICIO 11.b
+	//Ejercicio V2.1
+	OperatingSystem_ShowTime(SYSPROC);
 	//Ready-to-run_processes_queue:
+	
 	ComputerSystem_DebugMessage(106,SHORTTERMSCHEDULE);
 	for(int queue=0; queue < NUMBEROFQUEUES; queue++){
 		//Comprobamos que la cola no esta vacia
