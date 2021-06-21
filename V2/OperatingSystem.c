@@ -24,8 +24,10 @@ int OperatingSystem_ShortTermScheduler();
 int OperatingSystem_ExtractFromReadyToRun();
 void OperatingSystem_HandleException();
 void OperatingSystem_HandleSystemCall();
-//Ejercicio V2.5d
-OperatingSystem_AddBlockedQueue(int)
+
+void OperatingSystem_AddBlockedQueue(int);
+int OperatingSystem_ExtractFromBlocked();
+int OperatingSystem_CheckPriority(int process);
 //V1.10.a
 char * statesNames [5]={"NEW","READY","EXECUTING","BLOCKED","EXIT"};
 
@@ -184,6 +186,8 @@ int OperatingSystem_LongTermScheduler() {
 		}
 
 		else{
+			numberOfSuccessfullyCreatedProcesses++;
+
 			if (programList[i]->type==USERPROGRAM){
 				numberOfNotTerminatedUserProcesses++;
 				// Move process to the ready state
@@ -194,7 +198,10 @@ int OperatingSystem_LongTermScheduler() {
 			}
 		}
 	}
-
+	//Ejercicio V2.7
+	if (numberOfSuccessfullyCreatedProcesses > 0 ){
+		OperatingSystem_PrintStatus();
+	}
 	// Return the number of succesfully created processes
 	return numberOfSuccessfullyCreatedProcesses;
 }
@@ -326,7 +333,8 @@ void OperatingSystem_MoveToTheREADYState(int PID, int queueID) {
 		processTable[PID].state=READY;
 
 	} 
-	OperatingSystem_PrintReadyToRunQueue();
+	//Comentado por la V2.8
+	//OperatingSystem_PrintReadyToRunQueue();
 }
 
 
@@ -383,8 +391,7 @@ void OperatingSystem_HandleClockInterrupt(){
 	//Ejercicio V2.4
 	OperatingSystem_ShowTime(INTERRUPT);
 	numberOfClockInterrupts = numberOfClockInterrupts+1;
-	OperatingSystem_DebugMessage(120, INTERRUPT, numberOfClockInterrupts);
-	return; 
+	ComputerSystem_DebugMessage(120, INTERRUPT, numberOfClockInterrupts); //OperatingSystem_DebugMessage(120, INTERRUPT, numberOfClockInterrupts)
 	//Ejercicio V2.6
 	int process = Heap_getFirst(sleepingProcessesQueue, numberOfSleepingProcesses);
 	int unlocked = 0;
@@ -407,7 +414,7 @@ void OperatingSystem_HandleClockInterrupt(){
 			int priority = OperatingSystem_CheckPriority(new);
 			if (priority){
 				OperatingSystem_ShowTime(SHORTTERMSCHEDULE);
-				ComputerSystem_DebugMessage(121, SHORTTERMSCHEDULE, executingProcessID, programList[processTable[executingProcessID].programListIndex]->executableName, new, programList[processTable[procesoNuevo].programListIndex]->executableName);
+				ComputerSystem_DebugMessage(121, SHORTTERMSCHEDULE, executingProcessID, programList[processTable[executingProcessID].programListIndex]->executableName, new, programList[processTable[new].programListIndex]->executableName);
 				OperatingSystem_PreemptRunningProcess();
 				OperatingSystem_ShortTermScheduler();
 				OperatingSystem_Dispatch(new);
@@ -469,6 +476,9 @@ void OperatingSystem_HandleException() {
 	ComputerSystem_DebugMessage(71,SYSPROC,executingProcessID,programList[processTable[executingProcessID].programListIndex]->executableName);
 	
 	OperatingSystem_TerminateProcess();
+
+	//Ejercicio V2.7
+	OperatingSystem_PrintStatus();
 }
 
 
@@ -530,6 +540,8 @@ void OperatingSystem_HandleSystemCall() {
 			// Show message: "Process [executingProcessID] has requested to terminate\n"
 			ComputerSystem_DebugMessage(73,SYSPROC,executingProcessID,programList[processTable[executingProcessID].programListIndex]->executableName);
 			OperatingSystem_TerminateProcess();
+			//Ejercicio V2.7
+			OperatingSystem_PrintStatus();
 			break;
 
 		//Ejercicio V1.4
@@ -549,6 +561,8 @@ void OperatingSystem_HandleSystemCall() {
 					OperatingSystem_PreemptRunningProcess(); 
 					//Nuevo proceso
 					OperatingSystem_Dispatch(OperatingSystem_ShortTermScheduler());
+					//Ejercicio V2.7
+					OperatingSystem_PrintStatus();
 					}
 				}
 			break;
@@ -638,12 +652,10 @@ void OperatingSystem_PrintReadyToRunQueue(){
 			ComputerSystem_DebugMessage(114, SHORTTERMSCHEDULE, queueNames[queue]);
 		}
 	}
-
+}
 	//Ejercicio 5d
-	OperatingSystem_AddBlockedQueue(executingProcessID){
-
+	void OperatingSystem_AddBlockedQueue(int executingProcessID){
 		OperatingSystem_SaveContext(executingProcessID);
-
 		if (Heap_add(executingProcessID, sleepingProcessesQueue, QUEUE_WAKEUP, &numberOfSleepingProcesses, PROCESSTABLEMAXSIZE)>= 0) {
 			//Ejercicio V2.1
 			OperatingSystem_ShowTime(SYSPROC); // V2 - ejercicio1
@@ -689,9 +701,4 @@ int OperatingSystem_CheckPriority(int process){
 }
 //-------------------FIN Ejercicio V2.6------------------------
 
-
-
-
-
-}
 

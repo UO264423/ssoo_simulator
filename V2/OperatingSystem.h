@@ -66,4 +66,6 @@ int OperatingSystem_PrepareStudentsDaemons(int);
 void OperatingSystem_PrintReadyToRunQueue();
 void ComputerSystem_PrintProgramList();
 
+void OperatingSystem_AddBlockedQueue(int);
+
 #endif

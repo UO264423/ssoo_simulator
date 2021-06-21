@@ -269,7 +269,7 @@ void Processor_ManageInterrupts() {
 				Processor_CopyInSystemStack(MAINMEMORYSIZE-1, registerPC_CPU);
 				Processor_CopyInSystemStack(MAINMEMORYSIZE-2, registerPSW_CPU);	
 				//
-				Processor_CopyFromSystemStack(MAINMEMORYSIZE-3, registerAccumulator_CPU);
+				Processor_CopyInSystemStack(MAINMEMORYSIZE-3, registerAccumulator_CPU);
 				//Ejercicio V2.3d
 				Processor_ActivatePSW_Bit(INTERRUPT_MASKED_BIT);
 				// Activate protected excution mode
