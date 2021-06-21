@@ -332,7 +332,7 @@ void OperatingSystem_MoveToTheREADYState(int PID, int queueID) {
 		OperatingSystem_ShowTime(SYSPROC);
 		
 		//V1.10.b
-		ComputerSystem_DebugMessage(110,SYSPROC,PID,programList[processTable[executingProcessID].programListIndex]->executableName,statesNames[processTable[PID].state],"READY");
+		ComputerSystem_DebugMessage(110,SYSPROC,PID,programList[processTable[PID].programListIndex]->executableName,statesNames[processTable[PID].state],"READY");
 		processTable[PID].state=READY;
 
 	} 
@@ -383,7 +383,7 @@ void OperatingSystem_Dispatch(int PID) {
 	//Ejercicio V2.1
 	OperatingSystem_ShowTime(SYSPROC);
 	//V1.10.b
-	ComputerSystem_DebugMessage(110,SYSPROC,PID,programList[processTable[executingProcessID].programListIndex]->executableName,statesNames[processTable[PID].state],"EXECUTING");
+	ComputerSystem_DebugMessage(110,SYSPROC,PID,programList[processTable[PID].programListIndex]->executableName,statesNames[processTable[PID].state],"EXECUTING");
 	// Change the process' state
 	processTable[PID].state=EXECUTING;
 	// Modify hardware registers with appropriate values for the process identified by PID
