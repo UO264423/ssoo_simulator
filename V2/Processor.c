@@ -256,6 +256,8 @@ void Processor_DecodeAndExecuteInstruction() {
 // Hardware interrupt processing
 void Processor_ManageInterrupts() {
   
+	//Ejercicio V2.3c
+	if(!Processor_PSW_BitState(INTERRUPT_MASKED_BIT)){
 	int i;
 
 		for (i=0;i<INTERRUPTTYPES;i++)
@@ -266,12 +268,17 @@ void Processor_ManageInterrupts() {
 				// Copy PC and PSW registers in the system stack
 				Processor_CopyInSystemStack(MAINMEMORYSIZE-1, registerPC_CPU);
 				Processor_CopyInSystemStack(MAINMEMORYSIZE-2, registerPSW_CPU);	
+				//
+				Processor_CopyFromSystemStack(MAINMEMORYSIZE-3, registerAccumulator_CPU);
+				//Ejercicio V2.3d
+				Processor_ActivatePSW_Bit(INTERRUPT_MASKED_BIT);
 				// Activate protected excution mode
 				Processor_ActivatePSW_Bit(EXECUTION_MODE_BIT);
 				// Call the appropriate OS interrupt-handling routine setting PC register
 				registerPC_CPU=interruptVectorTable[i];
 				break; // Don't process another interrupt
 			}
+	}
 }
 
 char * Processor_ShowPSW(){
@@ -287,6 +294,8 @@ char * Processor_ShowPSW(){
 		pswmask[tam-ZERO_BIT]='Z';
 	if (Processor_PSW_BitState(POWEROFF_BIT))
 		pswmask[tam-POWEROFF_BIT]='S';
+	if (Processor_PSW_BitState(INTERRUPT_MASKED_BIT))
+ 		pswmask[tam-INTERRUPT_MASKED_BIT]='M';
 	return pswmask;
 }
 

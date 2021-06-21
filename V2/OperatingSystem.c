@@ -24,6 +24,8 @@ int OperatingSystem_ShortTermScheduler();
 int OperatingSystem_ExtractFromReadyToRun();
 void OperatingSystem_HandleException();
 void OperatingSystem_HandleSystemCall();
+//Ejercicio V2.5d
+OperatingSystem_AddBlockedQueue(int)
 //V1.10.a
 char * statesNames [5]={"NEW","READY","EXECUTING","BLOCKED","EXIT"};
 
@@ -54,6 +56,14 @@ int baseDaemonsInProgramList;
 
 // Variable containing the number of not terminated user processes
 int numberOfNotTerminatedUserProcesses=0;
+
+//Ejercicio V2.4
+int numberOfClockInterrupts=0;
+
+// In OperatingSystem.c Exercise 5-b of V2
+// Heap with blocked processes sort by when to wakeup
+heapItem sleepingProcessesQueue[PROCESSTABLEMAXSIZE];
+int numberOfSleepingProcesses=0; 
 
 // Initial set of tasks of the OS
 void OperatingSystem_Initialize(int daemonsIndex) {
@@ -278,6 +288,9 @@ void OperatingSystem_PCBInitialization(int PID, int initialPhysicalAddress, int 
 	processTable[PID].busy=1;
 	processTable[PID].initialPhysicalAddress=initialPhysicalAddress;
 	processTable[PID].processSize=processSize;
+	//Ejercicio V2.5a
+	processTable[PID].whenToWakeUp = 0;
+
 	//Ejercicio V2.1
 	OperatingSystem_ShowTime(SYSPROC);
 	// V1.10.b
@@ -367,7 +380,42 @@ void OperatingSystem_Dispatch(int PID) {
 
 // In OperatingSystem.c Exercise 2-b of V2
 void OperatingSystem_HandleClockInterrupt(){ 
+	//Ejercicio V2.4
+	OperatingSystem_ShowTime(INTERRUPT);
+	numberOfClockInterrupts = numberOfClockInterrupts+1;
+	OperatingSystem_DebugMessage(120, INTERRUPT, numberOfClockInterrupts);
 	return; 
+	//Ejercicio V2.6
+	int process = Heap_getFirst(sleepingProcessesQueue, numberOfSleepingProcesses);
+	int unlocked = 0;
+	int locked = 0;
+	int readyProcess = 0;
+
+	//Ejercicio V2.6
+	while ( (processTable[process].whenToWakeUp == numberOfClockInterrupts) && (numberOfSleepingProcesses > 0)){
+		readyProcess = OperatingSystem_ExtractFromBlocked(); 
+		OperatingSystem_MoveToTheREADYState(readyProcess, processTable[readyProcess].queueID); 
+		unlocked = 1; 
+		process = Heap_getFirst(sleepingProcessesQueue, numberOfSleepingProcesses); 
+	}
+	if (unlocked){
+		OperatingSystem_PrintStatus();
+	}
+	//Ejercicio V2.6
+	if (locked){
+			int new = Heap_getFirst(readyToRunQueue[USERPROCESSQUEUE], numberOfReadyToRunProcesses[USERPROCESSQUEUE]); 
+			int priority = OperatingSystem_CheckPriority(new);
+			if (priority){
+				OperatingSystem_ShowTime(SHORTTERMSCHEDULE);
+				ComputerSystem_DebugMessage(121, SHORTTERMSCHEDULE, executingProcessID, programList[processTable[executingProcessID].programListIndex]->executableName, new, programList[processTable[procesoNuevo].programListIndex]->executableName);
+				OperatingSystem_PreemptRunningProcess();
+				OperatingSystem_ShortTermScheduler();
+				OperatingSystem_Dispatch(new);
+				//Ejercicio V2.6
+				OperatingSystem_PrintStatus();
+			}
+
+	}
 } 
 
 
@@ -503,7 +551,17 @@ void OperatingSystem_HandleSystemCall() {
 					OperatingSystem_Dispatch(OperatingSystem_ShortTermScheduler());
 					}
 				}
-				break;
+			break;
+
+		//Ejercicio V2.5d
+		case SYSCALL_SLEEP:
+			processTable[executingProcessID].whenToWakeUp= 1+ numberOfClockInterrupts + Processor_GetAccumulator();
+			OperatingSystem_AddBlockedQueue(executingProcessID);
+			OperatingSystem_Dispatch(OperatingSystem_ShortTermScheduler());
+			//Ejercicio V2.5e
+			OperatingSystem_PrintStatus();
+			break;
+
 	}
 }
 	
@@ -516,7 +574,7 @@ void OperatingSystem_InterruptLogic(int entryPoint){
 		case EXCEPTION_BIT: // EXCEPTION_BIT=6
 			OperatingSystem_HandleException();
 			break;
-		//Ejercicio V2.2a
+		//Ejercicio V2.2c
 		case CLOCKINT_BIT: // CLOCKINT_BIT=9
 			OperatingSystem_HandleClockInterrupt();
 			break;
@@ -547,7 +605,6 @@ void OperatingSystem_PrintReadyToRunQueue(){
 	//Ejercicio V2.1
 	OperatingSystem_ShowTime(SYSPROC);
 	//Ready-to-run_processes_queue:
-	
 	ComputerSystem_DebugMessage(106,SHORTTERMSCHEDULE);
 	for(int queue=0; queue < NUMBEROFQUEUES; queue++){
 		//Comprobamos que la cola no esta vacia
@@ -581,6 +638,60 @@ void OperatingSystem_PrintReadyToRunQueue(){
 			ComputerSystem_DebugMessage(114, SHORTTERMSCHEDULE, queueNames[queue]);
 		}
 	}
+
+	//Ejercicio 5d
+	OperatingSystem_AddBlockedQueue(executingProcessID){
+
+		OperatingSystem_SaveContext(executingProcessID);
+
+		if (Heap_add(executingProcessID, sleepingProcessesQueue, QUEUE_WAKEUP, &numberOfSleepingProcesses, PROCESSTABLEMAXSIZE)>= 0) {
+			//Ejercicio V2.1
+			OperatingSystem_ShowTime(SYSPROC); // V2 - ejercicio1
+			ComputerSystem_DebugMessage(110, SYSPROC, executingProcessID, programList[processTable[executingProcessID].programListIndex]->executableName, statesNames[processTable[executingProcessID].state], statesNames[3]);
+			processTable[executingProcessID].state = BLOCKED;
+		}
+		executingProcessID = NOPROCESS;
+	}
+
+	//--------------------Ejercicio V2.6------------------------
+	// Ejercicio V2.6a
+	int OperatingSystem_ExtractFromBlocked(){
+		int process;
+		if (numberOfSleepingProcesses > 0){
+			process = Heap_poll(sleepingProcessesQueue, QUEUE_PRIORITY, &numberOfSleepingProcesses);
+		}else{
+			process = NOPROCESS;
+		}
+		return process;
+	}
+
+	
+	int OperatingSystem_CheckQueues(){
+		if (numberOfReadyToRunProcesses[USERPROCESSQUEUE] > 0){ 
+			return USERPROCESSQUEUE;
+		}
+		if (numberOfReadyToRunProcesses[DAEMONSQUEUE] > 0){ 
+			return DAEMONSQUEUE;
+		}
+		return -1;
+	}	
+
+
+int OperatingSystem_CheckPriority(int process){
+	if ((processTable[executingProcessID].queueID != processTable[process].queueID) && (processTable[executingProcessID].queueID == DAEMONSQUEUE)){
+		return 1;
+	}
+	if ((processTable[executingProcessID].queueID == processTable[process].queueID) && (processTable[process].priority < processTable[executingProcessID].priority)){
+		return 1;
+	}
+	
+	return 0;
+}
+//-------------------FIN Ejercicio V2.6------------------------
+
+
+
+
 
 }
 
