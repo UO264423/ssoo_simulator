@@ -25,9 +25,13 @@ int OperatingSystem_ExtractFromReadyToRun();
 void OperatingSystem_HandleException();
 void OperatingSystem_HandleSystemCall();
 
+void OperatingSystem_HandleClockInterrupt();
+
+void OperatingSystem_PrintReadyToRunQueue();
 void OperatingSystem_AddBlockedQueue(int);
 int OperatingSystem_ExtractFromBlocked();
 int OperatingSystem_CheckPriority(int process);
+
 //V1.10.a
 char * statesNames [5]={"NEW","READY","EXECUTING","BLOCKED","EXIT"};
 
@@ -99,7 +103,7 @@ void OperatingSystem_Initialize(int daemonsIndex) {
 	
 	// Create all user processes from the information given in the command line
 	//Se le asigna la variable en el ejercicio V1.15
-	int numberOfProcess = OperatingSystem_LongTermScheduler();
+	int numberOfUserProcess = OperatingSystem_LongTermScheduler();
 	
 	if (strcmp(programList[processTable[sipID].programListIndex]->executableName,"SystemIdleProcess")) {
 		//Ejercicio V2.1
@@ -109,7 +113,7 @@ void OperatingSystem_Initialize(int daemonsIndex) {
 		exit(1);		
 	}
 	//Ejercicio V1.15
-	if(numberOfProcess<1){
+	if(numberOfUserProcess<1){
 		OperatingSystem_ReadyToShutdown();
 	}
 
@@ -225,16 +229,12 @@ int OperatingSystem_CreateProcess(int indexOfExecutableProgram) {
 	if(PID == NOFREEENTRY){
 		return NOFREEENTRY;
 	}
-
-	
-
 	// Check if programFile exists
 	programFile=fopen(executableProgram->executableName, "r");
 	//1.5.b
 	if (programFile==NULL){
 		return PROGRAMDOESNOTEXIST;
 	}
-
 	// Obtain the memory requirements of the program
 	processSize=OperatingSystem_ObtainProgramSize(programFile);	
 
@@ -242,9 +242,8 @@ int OperatingSystem_CreateProcess(int indexOfExecutableProgram) {
 	if(processSize == PROGRAMNOTVALID){
 		return PROGRAMNOTVALID;
 	}
-
 	//Ejercicio 1.5.c
-	if(processSize == PROGRAMDOESNOTEXIST){
+	else if(processSize == PROGRAMDOESNOTEXIST){
 		return PROGRAMDOESNOTEXIST;
 	}
 
@@ -259,10 +258,8 @@ int OperatingSystem_CreateProcess(int indexOfExecutableProgram) {
 		return TOOBIGPROCESS;
 	}
 
-	// Load program in the allocated memory
-	loadProgram = OperatingSystem_LoadProgram(programFile, loadingPhysicalAddress, processSize);
 	//1.7.a
-	if(loadProgram == TOOBIGPROCESS){
+	if(OperatingSystem_LoadProgram(programFile, loadingPhysicalAddress, processSize) == TOOBIGPROCESS){
 		return TOOBIGPROCESS;
 	}
 
@@ -295,8 +292,7 @@ void OperatingSystem_PCBInitialization(int PID, int initialPhysicalAddress, int 
 	processTable[PID].busy=1;
 	processTable[PID].initialPhysicalAddress=initialPhysicalAddress;
 	processTable[PID].processSize=processSize;
-	//Ejercicio V2.5a
-	processTable[PID].whenToWakeUp = 0;
+	
 
 	//Ejercicio V2.1
 	OperatingSystem_ShowTime(SYSPROC);
@@ -304,18 +300,25 @@ void OperatingSystem_PCBInitialization(int PID, int initialPhysicalAddress, int 
 	ComputerSystem_DebugMessage(111,SYSPROC,PID,programList[processTable[PID].programListIndex]->executableName,"NEW");
 
 	processTable[PID].state=NEW;
+	//Ejercicio V2.5a
+	processTable[PID].whenToWakeUp = 0;
 	processTable[PID].priority=priority;
 	processTable[PID].programListIndex=processPLIndex;
 	//Ejercicio V1.12
 	processTable[PID].copyOfAccumulator = 0;
 	// Daemons run in protected mode and MMU use real address
 	if (programList[processPLIndex]->type == DAEMONPROGRAM) {
+		//SolucionFallo V2
+		processTable[PID].queueID = DAEMONSQUEUE;
 		processTable[PID].copyOfPCRegister=initialPhysicalAddress;
 		processTable[PID].copyOfPSWRegister= ((unsigned int) 1) << EXECUTION_MODE_BIT;
 	} 
 	else {
+		//SolucionFallo V2
+		processTable[PID].queueID = USERPROCESSQUEUE;
 		processTable[PID].copyOfPCRegister=0;
 		processTable[PID].copyOfPSWRegister=0;
+
 	}
 
 }
@@ -357,11 +360,12 @@ int OperatingSystem_ExtractFromReadyToRun() {
 	int selectedProcess=NOPROCESS;
 
 	// V.11c
-	if (numberOfReadyToRunProcesses[USERPROCESSQUEUE] > 0){
+	if (numberOfReadyToRunProcesses[USERPROCESSQUEUE] >=1){
 		selectedProcess = Heap_poll(readyToRunQueue[USERPROCESSQUEUE], QUEUE_PRIORITY, &numberOfReadyToRunProcesses[USERPROCESSQUEUE]);
 	}
-	else { // No hay procesos de usuario
-		if (numberOfReadyToRunProcesses[DAEMONSQUEUE] > 0){ 
+	// La cola de procesos de usuario esta vacia
+	else { 
+		if (numberOfReadyToRunProcesses[DAEMONSQUEUE] >=1 ){ 
 			selectedProcess = Heap_poll(readyToRunQueue[DAEMONSQUEUE], QUEUE_PRIORITY, &numberOfReadyToRunProcesses[DAEMONSQUEUE]);
 		}
 	}
@@ -393,16 +397,19 @@ void OperatingSystem_HandleClockInterrupt(){
 	numberOfClockInterrupts = numberOfClockInterrupts+1;
 	ComputerSystem_DebugMessage(120, INTERRUPT, numberOfClockInterrupts); //OperatingSystem_DebugMessage(120, INTERRUPT, numberOfClockInterrupts)
 	//Ejercicio V2.6
-	int process = Heap_getFirst(sleepingProcessesQueue, numberOfSleepingProcesses);
 	int unlocked = 0;
 	int locked = 0;
 	int readyProcess = 0;
+	int process = Heap_getFirst(sleepingProcessesQueue, numberOfSleepingProcesses);
+	
+	
 
 	//Ejercicio V2.6
 	while ( (processTable[process].whenToWakeUp == numberOfClockInterrupts) && (numberOfSleepingProcesses > 0)){
 		readyProcess = OperatingSystem_ExtractFromBlocked(); 
 		OperatingSystem_MoveToTheREADYState(readyProcess, processTable[readyProcess].queueID); 
 		unlocked = 1; 
+		locked = 1;
 		process = Heap_getFirst(sleepingProcessesQueue, numberOfSleepingProcesses); 
 	}
 	if (unlocked){
@@ -521,7 +528,7 @@ void OperatingSystem_TerminateProcess() {
 // System call management routine
 void OperatingSystem_HandleSystemCall() {
   
-	int systemCallID, queue, nextProcess;
+	int systemCallID, queue, nextProcess, whenToWakeUpTemp ;
 
 	// Register A contains the identifier of the issued system call
 	systemCallID=Processor_GetRegisterA();
@@ -546,17 +553,16 @@ void OperatingSystem_HandleSystemCall() {
 
 		//Ejercicio V1.4
 		case SYSCALL_YIELD:
-			//Porceso en ejecucion
 			queue = processTable[executingProcessID].queueID;
 			nextProcess = Heap_getFirst(readyToRunQueue[queue], numberOfReadyToRunProcesses[queue]);
+			
+			
 			// Si hay algo en la cola
 			if (numberOfReadyToRunProcesses[queue] > 0){
-				//Prioridad del proceso
-				int priorityProcess = processTable[nextProcess].priority; 
-				if (processTable[executingProcessID].priority == priorityProcess){
+				if (processTable[nextProcess].priority  == processTable[executingProcessID].priority ){
 					//Ejercicio V2.1
 					OperatingSystem_ShowTime(SYSPROC);
-					ComputerSystem_DebugMessage(115, SYSPROC, executingProcessID, programList[processTable[executingProcessID].programListIndex]->executableName, nextProcess, programList[processTable[priorityProcess].programListIndex]->executableName);
+					ComputerSystem_DebugMessage(115, SYSPROC, executingProcessID, programList[processTable[executingProcessID].programListIndex]->executableName, nextProcess, programList[processTable[processTable[nextProcess].priority].programListIndex]->executableName);
 					// Detiene el proceso en ejecucion
 					OperatingSystem_PreemptRunningProcess(); 
 					//Nuevo proceso
@@ -569,7 +575,15 @@ void OperatingSystem_HandleSystemCall() {
 
 		//Ejercicio V2.5d
 		case SYSCALL_SLEEP:
-			processTable[executingProcessID].whenToWakeUp= 1+ numberOfClockInterrupts + Processor_GetAccumulator();
+			
+			whenToWakeUpTemp = 1 + numberOfClockInterrupts + Processor_GetAccumulator();
+			if(whenToWakeUpTemp >=0){//Comprobamos que no sea negativo
+				processTable[executingProcessID].whenToWakeUp=whenToWakeUpTemp;
+			}
+			else{
+				processTable[executingProcessID].whenToWakeUp=whenToWakeUpTemp * -1;
+			}
+			
 			OperatingSystem_AddBlockedQueue(executingProcessID);
 			OperatingSystem_Dispatch(OperatingSystem_ShortTermScheduler());
 			//Ejercicio V2.5e
@@ -594,6 +608,30 @@ void OperatingSystem_InterruptLogic(int entryPoint){
 			break;
 	}
 }
+
+	int OperatingSystem_CheckQueues(){
+		if (numberOfReadyToRunProcesses[USERPROCESSQUEUE] > 0){ 
+			return USERPROCESSQUEUE;
+		}
+		if (numberOfReadyToRunProcesses[DAEMONSQUEUE] > 0){ 
+			return DAEMONSQUEUE;
+		}
+		return -1;
+	}	
+
+
+int OperatingSystem_CheckPriority(int process){
+	if ((processTable[executingProcessID].queueID != processTable[process].queueID) && (processTable[executingProcessID].queueID == DAEMONSQUEUE)){
+		return 1;
+	}
+	if ((processTable[executingProcessID].queueID == processTable[process].queueID) && (processTable[process].priority < processTable[executingProcessID].priority)){
+		return 1;
+	}
+	
+	return 0;
+}
+
+
 //V1.8
 void OperatingSystem_PrintReadyToRunQueue(){
 	/**
@@ -629,7 +667,7 @@ void OperatingSystem_PrintReadyToRunQueue(){
 				int priority = processTable[readyToRunQueue[queue][i].info].priority;
 
 				if(i==0){
-					if((i+1)==numberOfReadyToRunProcesses[queue]){
+					if(i==numberOfReadyToRunProcesses[queue]+1){
 						//Si solo hay uno
 						ComputerSystem_DebugMessage(113, SHORTTERMSCHEDULE, readyToRunQueue[queue][i].info, priority);
 					}
@@ -638,7 +676,7 @@ void OperatingSystem_PrintReadyToRunQueue(){
 					}
 				}
 				else{
-					if((i+1)==numberOfReadyToRunProcesses[queue])
+					if(i==numberOfReadyToRunProcesses[queue]+1)
 						//Imprime el proceso como primero.
 						ComputerSystem_DebugMessage(109, SHORTTERMSCHEDULE, readyToRunQueue[queue][i].info, priority);
 					else
@@ -656,9 +694,9 @@ void OperatingSystem_PrintReadyToRunQueue(){
 	//Ejercicio 5d
 	void OperatingSystem_AddBlockedQueue(int executingProcessID){
 		OperatingSystem_SaveContext(executingProcessID);
-		if (Heap_add(executingProcessID, sleepingProcessesQueue, QUEUE_WAKEUP, &numberOfSleepingProcesses, PROCESSTABLEMAXSIZE)>= 0) {
+		if (Heap_add(executingProcessID, sleepingProcessesQueue, QUEUE_WAKEUP, &numberOfSleepingProcesses, PROCESSTABLEMAXSIZE)>-1) {
 			//Ejercicio V2.1
-			OperatingSystem_ShowTime(SYSPROC); // V2 - ejercicio1
+			OperatingSystem_ShowTime(SYSPROC);
 			ComputerSystem_DebugMessage(110, SYSPROC, executingProcessID, programList[processTable[executingProcessID].programListIndex]->executableName, statesNames[processTable[executingProcessID].state], statesNames[3]);
 			processTable[executingProcessID].state = BLOCKED;
 		}
@@ -668,37 +706,12 @@ void OperatingSystem_PrintReadyToRunQueue(){
 	//--------------------Ejercicio V2.6------------------------
 	// Ejercicio V2.6a
 	int OperatingSystem_ExtractFromBlocked(){
-		int process;
 		if (numberOfSleepingProcesses > 0){
-			process = Heap_poll(sleepingProcessesQueue, QUEUE_PRIORITY, &numberOfSleepingProcesses);
+			return Heap_poll(sleepingProcessesQueue, QUEUE_PRIORITY, &numberOfSleepingProcesses);
 		}else{
-			process = NOPROCESS;
+			return NOPROCESS;
 		}
-		return process;
 	}
-
-	
-	int OperatingSystem_CheckQueues(){
-		if (numberOfReadyToRunProcesses[USERPROCESSQUEUE] > 0){ 
-			return USERPROCESSQUEUE;
-		}
-		if (numberOfReadyToRunProcesses[DAEMONSQUEUE] > 0){ 
-			return DAEMONSQUEUE;
-		}
-		return -1;
-	}	
-
-
-int OperatingSystem_CheckPriority(int process){
-	if ((processTable[executingProcessID].queueID != processTable[process].queueID) && (processTable[executingProcessID].queueID == DAEMONSQUEUE)){
-		return 1;
-	}
-	if ((processTable[executingProcessID].queueID == processTable[process].queueID) && (processTable[process].priority < processTable[executingProcessID].priority)){
-		return 1;
-	}
-	
-	return 0;
-}
 //-------------------FIN Ejercicio V2.6------------------------
 
 

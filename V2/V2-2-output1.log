@@ -1,0 +1,1000 @@
+33 messages loaded from file messagesTCH.txt
+16 messages loaded from file messagesSTD.txt
+0 Asserts Loaded
+[0] User program list:
+	Program program-V2-fa with arrival time [0]
+	Program iDontExist with arrival time [0]
+	Program program-V2-fb with arrival time [0]
+	Program program-V2-fc with arrival time [0]
+	[0] New process [3 - SystemIdleProcess] moving to the [NEW] state 
+	[0] Process [3] created from program [SystemIdleProcess]
+	[0] Process [3 - SystemIdleProcess] moving from the [NEW] state to the [READY] state 
+	[0] New process [0 - SystemIdleProcess] moving to the [NEW] state 
+	[0] Process [0] created from program [program-V2-fa]
+	[0] Process [0 - SystemIdleProcess] moving from the [NEW] state to the [READY] state 
+	[0] ERROR: Program [iDontExist] is not valid [--- it does not exist ---]
+	[0] New process [1 - SystemIdleProcess] moving to the [NEW] state 
+	[0] Process [1] created from program [program-V2-fb]
+	[0] Process [1 - SystemIdleProcess] moving from the [NEW] state to the [READY] state 
+	[0] New process [2 - SystemIdleProcess] moving to the [NEW] state 
+	[0] Process [2] created from program [program-V2-fc]
+	[0] Process [2 - SystemIdleProcess] moving from the [NEW] state to the [READY] state 
+	[0] Running Process Information:
+		[--- No running process ---]
+	[0] Ready-to-run process queue:
+	USER: [0,5], [1,999], [2,5] 
+	DAEMONS:  [3,100] 
+	[0] SLEEPING Queue:
+		[--- empty queue ---]
+	[0] PID association with program's name:
+		PID: 0 -> program-V2-fa
+		PID: 1 -> program-V2-fb
+		PID: 2 -> program-V2-fc
+		PID: 3 -> SystemIdleProcess
+	[0] Process [0 - program-V2-fa] moving from the [READY] state to the [EXECUTING] state 
+[1] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+[2] {05 000 000} NOP 0 0 (PC: 1, Accumulator: 0, PSW: 0002 [--------------Z-])
+[3] {01 005 000} ADD 5 0 (PC: 2, Accumulator: 5, PSW: 0000 [----------------])
+[4] {04 007 000} TRAP 7 0 (PC: 3, Accumulator: 5, PSW: 0000 [----------------])
+[5] {0C 002 000} OS 2 0 (PC: 242, Accumulator: 5, PSW: 8080 [M-------X-------])
+	[6] Process [0 - program-V2-fa] moving from the [EXECUTING] state to the [BLOCKED] state 
+	[6] Process [2 - program-V2-fc] moving from the [READY] state to the [EXECUTING] state 
+	[6] Running Process Information:
+		[PID: 2, Priority: 5, WakeUp: 0, Queue: USER]
+	[6] Ready-to-run process queue:
+	USER:  [1,999] 
+	DAEMONS:  [3,100] 
+	[6] SLEEPING Queue:
+		[0, 5, 6]
+	[6] PID association with program's name:
+		PID: 0 -> program-V2-fa
+		PID: 1 -> program-V2-fb
+		PID: 2 -> program-V2-fc
+		PID: 3 -> SystemIdleProcess
+[7] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+[8] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+[9] {05 000 000} NOP 0 0 (PC: 1, Accumulator: 0, PSW: 0002 [--------------Z-])
+[10] {01 002 000} ADD 2 0 (PC: 2, Accumulator: 2, PSW: 0000 [----------------])
+[11] {0D 000 000} IRET 0 0 (PC: 2, Accumulator: 2, PSW: 0000 [----------------])
+[12] {04 007 000} TRAP 7 0 (PC: 3, Accumulator: 2, PSW: 0000 [----------------])
+[13] {0C 002 000} OS 2 0 (PC: 242, Accumulator: 2, PSW: 8080 [M-------X-------])
+	[14] Process [2 - program-V2-fc] moving from the [EXECUTING] state to the [BLOCKED] state 
+	[14] Process [1 - program-V2-fb] moving from the [READY] state to the [EXECUTING] state 
+	[14] Running Process Information:
+		[PID: 1, Priority: 999, WakeUp: 0, Queue: USER]
+	[14] Ready-to-run process queue:
+	USER: 
+	DAEMONS:  [3,100] 
+	[14] SLEEPING Queue:
+		[2, 5, 3], [0, 5, 6]
+	[14] PID association with program's name:
+		PID: 0 -> program-V2-fa
+		PID: 1 -> program-V2-fb
+		PID: 2 -> program-V2-fc
+		PID: 3 -> SystemIdleProcess
+[15] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+[16] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+[17] {01 002 000} ADD 2 0 (PC: 1, Accumulator: 2, PSW: 0000 [----------------])
+[18] {0A 801 000} INC -1 0 (PC: 2, Accumulator: 1, PSW: 0000 [----------------])
+[19] {07 002 000} ZJUMP 2 0 (PC: 3, Accumulator: 1, PSW: 0000 [----------------])
+[20] {06 802 000} JUMP -2 0 (PC: 1, Accumulator: 1, PSW: 0000 [----------------])
+[21] {0D 000 000} IRET 0 0 (PC: 1, Accumulator: 1, PSW: 0000 [----------------])
+[22] {0A 801 000} INC -1 0 (PC: 2, Accumulator: 0, PSW: 0002 [--------------Z-])
+[23] {07 002 000} ZJUMP 2 0 (PC: 4, Accumulator: 0, PSW: 0002 [--------------Z-])
+[24] {0A 001 000} INC 1 0 (PC: 5, Accumulator: 1, PSW: 0000 [----------------])
+[25] {04 007 000} TRAP 7 0 (PC: 6, Accumulator: 1, PSW: 0000 [----------------])
+[26] {0C 002 000} OS 2 0 (PC: 242, Accumulator: 1, PSW: 8080 [M-------X-------])
+	[27] Process [1 - program-V2-fb] moving from the [EXECUTING] state to the [BLOCKED] state 
+	[27] Process [3 - SystemIdleProcess] moving from the [READY] state to the [EXECUTING] state 
+	[27] Running Process Information:
+		[PID: 3, Priority: 100, WakeUp: 0, Queue: USER]
+	[27] Ready-to-run process queue:
+	USER: 
+	DAEMONS: 
+	[27] SLEEPING Queue:
+		[1, 999, 2], [0, 5, 6], [2, 5, 3]
+	[27] PID association with program's name:
+		PID: 0 -> program-V2-fa
+		PID: 1 -> program-V2-fb
+		PID: 2 -> program-V2-fc
+		PID: 3 -> SystemIdleProcess
+[28] {0D 000 000} IRET 0 0 (PC: 183, Accumulator: 0, PSW: 0082 [--------X-----Z-])
+[29] {0D 000 000} IRET 0 0 (PC: 183, Accumulator: 0, PSW: 0082 [--------X-----Z-])
+[30] {04 003 000} TRAP 3 0 (PC: 184, Accumulator: 0, PSW: 0082 [--------X-----Z-])
+[31] {0C 002 000} OS 2 0 (PC: 242, Accumulator: 0, PSW: 8082 [M-------X-----Z-])
+	[32] Process [3 - SystemIdleProcess] has requested to terminate
+	[32] Process [3 - SystemIdleProcess] moving from the [EXECUTING] state to the [EXIT] state 
+	[32] Process [-1 - SystemIdleProcess] moving from the [BLOCKED] state to the [EXECUTING] state 
+	[32] Running Process Information:
+		[--- No running process ---]
+	[32] Ready-to-run process queue:
+	USER: 
+	DAEMONS: 
+	[32] SLEEPING Queue:
+		[1, 999, 2], [0, 5, 6], [2, 5, 3]
+	[32] PID association with program's name:
+		PID: 0 -> program-V2-fa
+		PID: 1 -> program-V2-fb
+		PID: 2 -> program-V2-fc
+		PID: 3 -> SystemIdleProcess
+[33] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+[34] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+[36] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[41] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[46] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[51] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[56] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[61] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[66] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[71] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[76] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[81] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[86] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[91] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[96] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[101] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[106] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[111] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[116] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[121] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[126] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[131] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[136] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[141] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[146] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[151] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[156] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[161] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[166] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[171] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[176] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[181] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[186] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[191] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[196] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[201] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[206] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[211] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[216] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[221] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[226] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[231] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[236] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[241] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[246] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[251] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[256] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[261] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[266] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[271] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[276] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[281] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[286] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[291] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[296] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[301] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[306] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[311] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[316] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[321] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[326] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[331] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[336] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[341] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[346] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[351] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[356] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[361] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[366] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[371] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[376] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[381] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[386] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[391] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[396] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[401] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[406] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[411] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[416] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[421] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[426] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[431] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[436] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[441] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[446] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[451] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[456] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[461] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[466] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[471] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[476] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[481] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[486] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[491] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[496] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[501] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[506] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[511] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[516] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[521] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[526] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[531] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[536] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[541] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[546] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[551] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[556] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[561] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[566] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[571] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[576] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[581] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[586] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[591] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[596] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[601] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[606] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[611] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[616] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[621] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[626] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[631] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[636] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[641] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[646] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[651] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[656] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[661] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[666] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[671] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[676] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[681] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[686] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[691] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[696] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[701] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[706] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[711] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[716] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[721] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[726] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[731] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[736] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[741] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[746] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[751] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[756] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[761] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[766] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[771] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[776] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[781] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[786] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[791] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[796] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[801] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[806] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[811] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[816] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[821] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[826] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[831] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[836] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[841] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[846] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[851] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[856] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[861] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[866] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[871] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[876] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[881] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[886] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[891] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[896] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[901] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[906] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
+_ _ _
+_ _ _
+[911] {0D 000 000} IRET 0 0 (PC: 0, Accumulator: 0, PSW: 0002 [--------------Z-])
+_ _ _
+_ _ _
