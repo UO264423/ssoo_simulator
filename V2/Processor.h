@@ -10,12 +10,13 @@
 
 // Enumerated type that connects bit positions in the PSW register with
 // processor events and status
-enum PSW_BITS {POWEROFF_BIT=0, ZERO_BIT=1, NEGATIVE_BIT=2, OVERFLOW_BIT=3, EXECUTION_MODE_BIT=7};
+// INTERRUPT_MASKED_BIT=15 en el ejercicio V2-3.a
+enum PSW_BITS {POWEROFF_BIT=0, ZERO_BIT=1, NEGATIVE_BIT=2, OVERFLOW_BIT=3, EXECUTION_MODE_BIT=7, INTERRUPT_MASKED_BIT=15};
 
 // Enumerated type that connects bit positions in the interruptLines with
 // interrupt types 
-//Se ñañade el CLOCKINT_BIT Ejercicio V2.2a, INTERRUPT_MASKED_BIT=15 en el ejercicio V2-3.a
-enum INT_BITS {SYSCALL_BIT=2, EXCEPTION_BIT=6, CLOCKINT_BIT=9, INTERRUPT_MASKED_BIT=15};
+//Se ñañade el CLOCKINT_BIT Ejercicio V2.2a, 
+enum INT_BITS {SYSCALL_BIT=2, EXCEPTION_BIT=6, CLOCKINT_BIT=9};
 
 // Functions prototypes
 void Processor_InitializeInterruptVectorTable();
