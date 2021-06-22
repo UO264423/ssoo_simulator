@@ -32,6 +32,9 @@ void OperatingSystem_AddBlockedQueue(int);
 int OperatingSystem_ExtractFromBlocked();
 int OperatingSystem_CheckPriority(int process);
 
+//-------------V3-------------
+int OperatingSystem_GetExecutingProcessID();
+//............finv3................
 //V1.10.a
 char * statesNames [5]={"NEW","READY","EXECUTING","BLOCKED","EXIT"};
 
@@ -101,6 +104,10 @@ void OperatingSystem_Initialize(int daemonsIndex) {
 	// Include in program list  all system daemon processes
 	OperatingSystem_PrepareDaemons(daemonsIndex);
 	
+	// Antes de la llamada inicial al planificador le metemos el ejercicio V3.1C
+	ComputerSystem_FillInArrivalTimeQueue();
+	OperatingSystem_PrintStatus(); //Ejercicio V3.d
+
 	// Create all user processes from the information given in the command line
 	//Se le asigna la variable en el ejercicio V1.15
 	int numberOfUserProcess = OperatingSystem_LongTermScheduler();
@@ -714,4 +721,8 @@ void OperatingSystem_PrintReadyToRunQueue(){
 	}
 //-------------------FIN Ejercicio V2.6------------------------
 
-
+//-----------V3-----------------
+//Ejercicio V3.2, devuelve el PIODE del proceso en ejecucion
+int OperatingSystem_GetExecutingProcessID(){
+	return executingProcessID;
+}

@@ -22,3 +22,6 @@
 //----------V2----------------
 
 120,@CClock interrupt number [%d] has occurred@@\n
+
+//----------V3---------------
+130,{%x %x %x} %s %d %d (PC: @R%d@@, Accumulator: @R%d@@, PSW: @R%x@@ [@R%s@@])\n

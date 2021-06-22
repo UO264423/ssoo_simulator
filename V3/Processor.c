@@ -81,12 +81,13 @@ int Processor_FetchInstruction() {
 // Decode and execute the instruction in the IR register
 void Processor_DecodeAndExecuteInstruction() {
 	int tempAcc; // for save accumulator if necesary
+	
 
 	// Decode
 	int operationCode=Processor_DecodeOperationCode(registerIR_CPU);
 	int operand1=Processor_DecodeOperand1(registerIR_CPU);
 	int operand2=Processor_DecodeOperand2(registerIR_CPU);
-
+	
 	Processor_DeactivatePSW_Bit(OVERFLOW_BIT);
 
 	// Execute
@@ -200,7 +201,10 @@ void Processor_DecodeAndExecuteInstruction() {
 			// Show message: " (PC: registerPC_CPU, Accumulator: registerAccumulator_CPU, PSW: registerPSW_CPU [Processor_ShowPSW()]\n
 			//Ejercicio V1.16 - Se comprueba el modo de ejecucion y si no, se produce la interrupcion
 			if(Processor_PSW_BitState(EXECUTION_MODE_BIT)){
-				ComputerSystem_DebugMessage(69, HARDWARE,InstructionNames[operationCode],operand1,operand2,registerPC_CPU,registerAccumulator_CPU,registerPSW_CPU,Processor_ShowPSW());
+				//En la V3, la sigueinte linea ya no vale
+				//Ejercicio V3.2
+				ComputerSystem_DebugMessage(130, HARDWARE,InstructionNames[operationCode],operand1,operand2, OperatingSystem_GetExecutingProcessID(), registerPC_CPU, registerAccumulator_CPU, registerPSW_CPU, Processor_ShowPSW());
+				//ComputerSystem_DebugMessage(69, HARDWARE,InstructionNames[operationCode],operand1,operand2,registerPC_CPU,registerAccumulator_CPU,registerPSW_CPU,Processor_ShowPSW());
 				// Not all operating system code is executed in simulated processor, but really must do it... 
 				OperatingSystem_InterruptLogic(operand1);
 				registerPC_CPU++;
@@ -253,7 +257,10 @@ void Processor_DecodeAndExecuteInstruction() {
 	Processor_UpdatePSW();
 	// Show final part of HARDWARE message with	CPU registers
 	// Show message: " (PC: registerPC_CPU, Accumulator: registerAccumulator_CPU, PSW: registerPSW_CPU [Processor_ShowPSW()]\n
-	ComputerSystem_DebugMessage(69, HARDWARE, InstructionNames[operationCode],operand1,operand2,registerPC_CPU,registerAccumulator_CPU,registerPSW_CPU,Processor_ShowPSW());
+	//En la V3, la sigueinte linea ya no vale
+	//ComputerSystem_DebugMessage(69, HARDWARE, InstructionNames[operationCode],operand1,operand2,registerPC_CPU,registerAccumulator_CPU,registerPSW_CPU,Processor_ShowPSW());
+	//Ejercicio V3.2
+	ComputerSystem_DebugMessage(130, HARDWARE,InstructionNames[operationCode],operand1,operand2, OperatingSystem_GetExecutingProcessID(), registerPC_CPU, registerAccumulator_CPU, registerPSW_CPU, Processor_ShowPSW());
 }
 	
 	
