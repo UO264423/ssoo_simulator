@@ -20,6 +20,12 @@
 //Ejercicio V2.5c
 #define SLEEPINGQUEUE
 
+// Partitions configuration file name definition --- Ejercicio V2.5
+#define MEMCONFIG "MemConfig" // in OperatingSystem.h 
+
+//V4.6
+#define MEMORYFULL -5 // In OperatingSystem.h
+
 // In OperatingSystem.h
 #define NUMBEROFQUEUES 2
 enum TypeOfReadyToRunProcessQueues { USERPROCESSQUEUE, DAEMONSQUEUE};

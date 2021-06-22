@@ -19,7 +19,7 @@ void OperatingSystem_TerminateProcess();
 int OperatingSystem_LongTermScheduler();
 void OperatingSystem_PreemptRunningProcess();
 int OperatingSystem_CreateProcess(int);
-int OperatingSystem_ObtainMainMemory(int, int);
+int OperatingSystem_ObtainMainMemory(int, int, int);
 int OperatingSystem_ShortTermScheduler();
 int OperatingSystem_ExtractFromReadyToRun();
 void OperatingSystem_HandleException();
@@ -35,6 +35,13 @@ int OperatingSystem_CheckPriority(int process);
 //-------------V3-------------
 int OperatingSystem_GetExecutingProcessID();
 //............finv3................
+
+//-------------v4--------------
+int OperatingSystem_InitializePartitionTable();
+void OperatingSystem_ShowPartitionTable();
+void OperatingSystem_ReleaseMainMemory();
+int Processor_RegisterB_CPU();
+//------------finv4............
 //V1.10.a
 char * statesNames [5]={"NEW","READY","EXECUTING","BLOCKED","EXIT"};
 
@@ -74,6 +81,10 @@ int numberOfClockInterrupts=0;
 heapItem sleepingProcessesQueue[PROCESSTABLEMAXSIZE];
 int numberOfSleepingProcesses=0; 
 
+//Ejercicio V4.6
+int runningPartition = -1;
+int nPartitions = 0;
+
 // Initial set of tasks of the OS
 void OperatingSystem_Initialize(int daemonsIndex) {
 	
@@ -100,6 +111,9 @@ void OperatingSystem_Initialize(int daemonsIndex) {
 	}
 	// Initialization of the interrupt vector table of the processor
 	Processor_InitializeInterruptVectorTable(OS_address_base+2);
+
+	//Ejercicio v4.5 ------ Ejercicio V4.6
+	nPartitions = OperatingSystem_InitializePartitionTable();
 		
 	// Include in program list  all system daemon processes
 	OperatingSystem_PrepareDaemons(daemonsIndex);
@@ -202,9 +216,15 @@ int OperatingSystem_LongTermScheduler() {
 			OperatingSystem_ReadyToShutdown();
 		}
 
+		//V4.6
+		else if(PID == MEMORYFULL){
+			OperatingSystem_ShowTime(ERROR);
+			//[1]_ERROR:_A_process_could_not_be_created_from_program_[acceptableSizeExample]_because_an_appropriate_partition_is_not_available 
+			ComputerSystem_DebugMessage(144, ERROR, programList[i]->executableName);
+		}
+
 		else{
 			numberOfSuccessfullyCreatedProcesses++;
-
 			if (programList[i]->type==USERPROGRAM){
 				numberOfNotTerminatedUserProcesses++;
 				// Move process to the ready state
@@ -231,7 +251,7 @@ int OperatingSystem_CreateProcess(int indexOfExecutableProgram) {
 	int processSize;
 	int loadingPhysicalAddress;
 	int priority;
-	int loadProgram;
+	//int loadProgram;
 	FILE *programFile;
 	PROGRAMS_DATA *executableProgram=programList[indexOfExecutableProgram];
 
@@ -264,7 +284,7 @@ int OperatingSystem_CreateProcess(int indexOfExecutableProgram) {
 	priority=OperatingSystem_ObtainPriority(programFile);
 	
 	// Obtain enough memory space
- 	loadingPhysicalAddress=OperatingSystem_ObtainMainMemory(processSize, PID);
+ 	loadingPhysicalAddress=OperatingSystem_ObtainMainMemory(processSize, PID, indexOfExecutableProgram);
 
 	//Ejercicio 1.6.b
 	if (loadingPhysicalAddress == TOOBIGPROCESS){
@@ -276,8 +296,19 @@ int OperatingSystem_CreateProcess(int indexOfExecutableProgram) {
 		return TOOBIGPROCESS;
 	}
 
+	// V4.7 
+	OperatingSystem_ShowPartitionTable(" before allocating memory ");
+
+	//-----v2.6-------
+	OperatingSystem_ShowTime(SYSMEM);
+	ComputerSystem_DebugMessage(143, SYSMEM, runningPartition, loadingPhysicalAddress, partitionsTable[runningPartition].size, PID, executableProgram->executableName);
+	//................
+
 	// PCB initialization
 	OperatingSystem_PCBInitialization(PID, loadingPhysicalAddress, processSize, priority, indexOfExecutableProgram);
+	// V4.7 
+	OperatingSystem_ShowPartitionTable(" after allocating memory ");
+	
 	//Ejercicio V2.1
 	OperatingSystem_ShowTime(INIT);
 	// Show message "Process [PID] created from program [executableName]\n"
@@ -291,12 +322,41 @@ int OperatingSystem_CreateProcess(int indexOfExecutableProgram) {
 
 // Main memory is assigned in chunks. All chunks are the same size. A process
 // always obtains the chunk whose position in memory is equal to the processor identifier
-int OperatingSystem_ObtainMainMemory(int processSize, int PID) {
+int OperatingSystem_ObtainMainMemory(int processSize, int PID, int pos) { //int pos del v4.6
+	int actPart= -10;
+ 	int n = 0;
+	int isOk = 0; //Checks the size (booleano de toda la vida pero en c)
+	int part = MAINMEMORYSIZE; //Particion a escoger
+	int i;
+	for(i =0 ; i < nPartitions; i++ ){
+		if((partitionsTable[i].size > processSize-1) && (partitionsTable[i].PID == NOPROCESS) ){
+			if(part > partitionsTable[i].size){
+				actPart = i;
+				isOk = 1;
+				part = partitionsTable[i].size;
 
- 	if (processSize>MAINMEMORYSECTIONSIZE)
-		return TOOBIGPROCESS;
+			}
+		}
+		else{
+			if(partitionsTable[i].size > processSize-1){
+				isOk=1;
+			}
+		}
+	}
+	n = partitionsTable[actPart].initAddress;
+	OperatingSystem_ShowTime(SYSMEM);
+	ComputerSystem_DebugMessage(142, SYSMEM, PID, programList[pos]->executableName, processSize); // V4 - ejercicio6b
 	
- 	return PID*MAINMEMORYSECTIONSIZE;
+	if(isOk){
+		return MEMORYFULL;
+	}
+	else if (actPart != -10){
+		return TOOBIGPROCESS;
+	}
+	else{
+		runningPartition = actPart;
+		return n;
+	}
 }
 
 
@@ -331,8 +391,8 @@ void OperatingSystem_PCBInitialization(int PID, int initialPhysicalAddress, int 
 		processTable[PID].queueID = USERPROCESSQUEUE;
 		processTable[PID].copyOfPCRegister=0;
 		processTable[PID].copyOfPSWRegister=0;
-
 	}
+	partitionsTable[runningPartition].PID = PID;
 
 }
 
@@ -498,11 +558,36 @@ void OperatingSystem_SaveContext(int PID) {
 // Exception management routine
 void OperatingSystem_HandleException() {
 	//Ejercicio V2.1
-	OperatingSystem_ShowTime(SYSPROC);
+	OperatingSystem_ShowTime(INTERRUPT);
   
+	//Se comente en la V4.2
 	// Show message "Process [executingProcessID] has generated an exception and is terminating\n"
-	ComputerSystem_DebugMessage(71,SYSPROC,executingProcessID,programList[processTable[executingProcessID].programListIndex]->executableName);
+	//ComputerSystem_DebugMessage(71,SYSPROC,executingProcessID,programList[processTable[executingProcessID].programListIndex]->executableName);
 	
+	//Ejercicio V4.2
+	switch (Processor_RegisterB_CPU())
+	{
+	case INVALIDADDRESS://Ejercicio V4.2
+		ComputerSystem_DebugMessage(140, INTERRUPT, executingProcessID, programList[processTable[executingProcessID].programListIndex]->executableName, "invalid address");
+		break;
+	//Ejercicio V4.3
+	case INVALIDINSTRUCTION:
+		ComputerSystem_DebugMessage(140, INTERRUPT, executingProcessID, programList[processTable[executingProcessID].programListIndex]->executableName, "invalid instruction");
+		break;
+
+	case INVALIDPROCESSORMODE://Ejercicio V4.2
+		ComputerSystem_DebugMessage(140, INTERRUPT, executingProcessID, programList[processTable[executingProcessID].programListIndex]->executableName, "invalid processor mode");
+		break;
+	
+	case DIVISIONBYZERO://Ejercicio V4.2
+		ComputerSystem_DebugMessage(140, INTERRUPT, executingProcessID, programList[processTable[executingProcessID].programListIndex]->executableName, "division by zero");
+		break;
+
+	default:
+		break;
+	}
+
+
 	OperatingSystem_TerminateProcess();
 
 	//Ejercicio V2.7
@@ -522,6 +607,9 @@ void OperatingSystem_TerminateProcess() {
 	ComputerSystem_DebugMessage(110,SYSPROC,executingProcessID,programList[processTable[executingProcessID].programListIndex]->executableName,statesNames[processTable[executingProcessID].state],"EXIT");
   	
 	processTable[executingProcessID].state=EXIT;
+
+	//v4.8
+	OperatingSystem_ReleaseMainMemory();
 	
 	if (programList[processTable[executingProcessID].programListIndex]->type==USERPROGRAM) 
 		// One more user process that has terminated
@@ -612,6 +700,14 @@ void OperatingSystem_HandleSystemCall() {
 			OperatingSystem_AddBlockedQueue(executingProcessID);
 			OperatingSystem_Dispatch(OperatingSystem_ShortTermScheduler());
 			//Ejercicio V2.5e
+			OperatingSystem_PrintStatus();
+			break;
+		
+		//Ejercicio V4.4
+		default:
+			OperatingSystem_ShowTime(INTERRUPT);
+			ComputerSystem_DebugMessage(141, INTERRUPT, executingProcessID, programList[processTable[executingProcessID].programListIndex]->executableName, systemCallID);
+			OperatingSystem_TerminateProcess();
 			OperatingSystem_PrintStatus();
 			break;
 
@@ -744,3 +840,21 @@ void OperatingSystem_PrintReadyToRunQueue(){
 int OperatingSystem_GetExecutingProcessID(){
 	return executingProcessID;
 }
+
+//V4.8
+void OperatingSystem_ReleaseMainMemory(){
+	
+	OperatingSystem_ShowPartitionTable(" before releasing memory ");
+	int i =0;
+	while((i < PARTITIONTABLEMAXSIZE) && (partitionsTable[i].initAddress > -1)){
+		if (executingProcessID == partitionsTable[i].PID){
+			partitionsTable[i].PID = NOPROCESS;	
+			OperatingSystem_ShowTime(SYSMEM);
+			ComputerSystem_DebugMessage(145, SYSMEM, i, partitionsTable[i].initAddress, partitionsTable[i].size, executingProcessID, programList[processTable[executingProcessID].programListIndex]->executableName);
+			OperatingSystem_ShowPartitionTable(" after releasing memory ");
+		}
+		i++;
+	} 
+
+}
+	

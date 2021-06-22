@@ -9,6 +9,7 @@
 
 // Internals Functions prototypes
 void Processor_ManageInterrupts();
+int OperatingSystem_GetExecutingProcessID();
 
 // External data
 extern char *InstructionNames[];
@@ -23,6 +24,8 @@ BUSDATACELL registerMBR_CPU; // Memory Buffer Register
 int registerCTRL_CPU; // Control bus Register
 
 int registerA_CPU; // General purpose register
+//Pues despues del a va el b, Ejercicio V4.1a
+int registerB_CPU; // Another general purpose register Exercise 1-a of V4
 
 int interruptLines_CPU; // Processor interrupt lines
 
@@ -116,7 +119,8 @@ void Processor_DecodeAndExecuteInstruction() {
 		// Instruction DIV
 		case DIV_INST: 
 			if (operand2 == 0)
-				Processor_RaiseInterrupt(EXCEPTION_BIT); 
+				//Ejercicio V4.1
+				Processor_RaiseException(DIVISIONBYZERO); 
 			else {
 				registerAccumulator_CPU=operand1 / operand2;
 				registerPC_CPU++;
@@ -191,7 +195,8 @@ void Processor_DecodeAndExecuteInstruction() {
 				Processor_ActivatePSW_Bit(POWEROFF_BIT);
 			}
 			else{
-				Processor_RaiseInterrupt(EXCEPTION_BIT);
+				//Ejercicio V4.1
+				Processor_RaiseException(INVALIDPROCESSORMODE); 
 			}
 			break;
 			  
@@ -213,6 +218,7 @@ void Processor_DecodeAndExecuteInstruction() {
 			}
 			else{
 				Processor_RaiseInterrupt(EXCEPTION_BIT);
+				Processor_RaiseException(INVALIDPROCESSORMODE);
 			}
 			break; // Note: message show before... for operating system messages after...
 
@@ -224,7 +230,8 @@ void Processor_DecodeAndExecuteInstruction() {
 				registerPSW_CPU=Processor_CopyFromSystemStack(MAINMEMORYSIZE-2);
 			}
 			else{
-				Processor_RaiseInterrupt(EXCEPTION_BIT);
+				//Ejercicio V4.1
+				Processor_RaiseException(INVALIDPROCESSORMODE);
 			}
 			
 			break;	
@@ -248,8 +255,12 @@ void Processor_DecodeAndExecuteInstruction() {
 
 		// Unknown instruction
 		default : 
+			Processor_RaiseException(INVALIDINSTRUCTION);
+			//Se ha comentado para el V4.3
+			/**
 			operationCode=NONEXISTING_INST;
 			registerPC_CPU++;
+			*/
 			break;
 	}
 	
@@ -312,3 +323,8 @@ char * Processor_ShowPSW(){
 
 /////////////////////////////////////////////////////////
 //  New functions below this line  //////////////////////
+
+//Solo se añade una funcion que devuelve el registerb en todo la practica
+int Processor_RegisterB_CPU(){
+	return registerB_CPU;
+}
