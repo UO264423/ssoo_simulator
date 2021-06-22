@@ -110,8 +110,14 @@ void OperatingSystem_Initialize(int daemonsIndex) {
 
 	// Create all user processes from the information given in the command line
 	//Se le asigna la variable en el ejercicio V1.15
-	int numberOfUserProcess = OperatingSystem_LongTermScheduler();
+	OperatingSystem_LongTermScheduler();
 	
+	if(numberOfProgramsInArrivalTimeQueue + numberOfNotTerminatedUserProcesses==0){
+		OperatingSystem_ReadyToShutdown();
+	}//Ejercicio v3.5
+	
+
+
 	if (strcmp(programList[processTable[sipID].programListIndex]->executableName,"SystemIdleProcess")) {
 		//Ejercicio V2.1
 		OperatingSystem_ShowTime(SHUTDOWN);
@@ -120,9 +126,9 @@ void OperatingSystem_Initialize(int daemonsIndex) {
 		exit(1);		
 	}
 	//Ejercicio V1.15
-	if(numberOfUserProcess<1){
-		OperatingSystem_ReadyToShutdown();
-	}
+	//if(numberOfUserProcess<1){
+	//	OperatingSystem_ReadyToShutdown();
+	//}
 
 	// At least, one user process has been created
 	// Select the first process that is going to use the processor
@@ -416,17 +422,25 @@ void OperatingSystem_HandleClockInterrupt(){
 		readyProcess = OperatingSystem_ExtractFromBlocked(); 
 		OperatingSystem_MoveToTheREADYState(readyProcess, processTable[readyProcess].queueID); 
 		unlocked = 1; 
+		process = Heap_getFirst(sleepingProcessesQueue, numberOfSleepingProcesses);
 		locked = 1;
-		process = Heap_getFirst(sleepingProcessesQueue, numberOfSleepingProcesses); 
 	}
+	int numeroProcesosLargoPlazo = OperatingSystem_LongTermScheduler();
+	
+	if(numberOfProgramsInArrivalTimeQueue==0){
+		if(numberOfNotTerminatedUserProcesses==0){
+			OperatingSystem_ReadyToShutdown();
+		}
+	}
+
 	if (unlocked){
 		OperatingSystem_PrintStatus();
 	}
 	//Ejercicio V2.6
 	if (locked){
+		if(numeroProcesosLargoPlazo>0){
 			int new = Heap_getFirst(readyToRunQueue[USERPROCESSQUEUE], numberOfReadyToRunProcesses[USERPROCESSQUEUE]); 
-			int priority = OperatingSystem_CheckPriority(new);
-			if (priority){
+			if (OperatingSystem_CheckPriority(new)){
 				OperatingSystem_ShowTime(SHORTTERMSCHEDULE);
 				ComputerSystem_DebugMessage(121, SHORTTERMSCHEDULE, executingProcessID, programList[processTable[executingProcessID].programListIndex]->executableName, new, programList[processTable[new].programListIndex]->executableName);
 				OperatingSystem_PreemptRunningProcess();
@@ -435,7 +449,7 @@ void OperatingSystem_HandleClockInterrupt(){
 				//Ejercicio V2.6
 				OperatingSystem_PrintStatus();
 			}
-
+		}
 	}
 } 
 
@@ -522,8 +536,12 @@ void OperatingSystem_TerminateProcess() {
 			ComputerSystem_DebugMessage(99,SHUTDOWN,"The system will shut down now...\n");
 			return; // Don't dispatch any process
 		}
-		// Simulation must finish, telling sipID to finish
-		OperatingSystem_ReadyToShutdown();
+		//V3.5
+		if(numberOfProgramsInArrivalTimeQueue ==0){
+			// Simulation must finish, telling sipID to finish
+			OperatingSystem_ReadyToShutdown();
+		}
+		
 	}
 	// Select the next process to execute (sipID if no more user processes)
 	selectedProcess=OperatingSystem_ShortTermScheduler();
