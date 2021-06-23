@@ -94,7 +94,7 @@ void MMU_SetCTRL (int ctrl) {
 				}
   			break;
   		default:
-		  		//Processor_RaiseException(INVALIDADDRESS);
+		  		Processor_RaiseException(INVALIDADDRESS);
 				registerCTRL_MMU |= CTRL_FAIL;
 				break;
   	}
