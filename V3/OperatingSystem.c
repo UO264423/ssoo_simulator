@@ -567,7 +567,7 @@ void OperatingSystem_HandleException() {
 	//ComputerSystem_DebugMessage(71,SYSPROC,executingProcessID,programList[processTable[executingProcessID].programListIndex]->executableName);
 	
 	//Ejercicio V4.2
-	switch (Processor_GetRegisterB_CPU())
+	switch (Processor_GetRegisterB())
 	{
 	case INVALIDADDRESS://Ejercicio V4.2
 		ComputerSystem_DebugMessage(140, INTERRUPT, executingProcessID, programList[processTable[executingProcessID].programListIndex]->executableName, "invalid address");
