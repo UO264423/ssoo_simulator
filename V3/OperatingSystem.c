@@ -179,9 +179,10 @@ int OperatingSystem_LongTermScheduler() {
 	
   
 	int PID, i, numberOfSuccessfullyCreatedProcesses=0;
+	int yes =1;
 	
 	//for (i=0; programList[i]!=NULL && i<PROGRAMSMAXNUMBER ; i++) {
-	while (OperatingSystem_IsThereANewProgram()){
+	while (OperatingSystem_IsThereANewProgram() ==yes){
 		//Ejercicio V3.3
 		i = Heap_poll(arrivalTimeQueue, QUEUE_ARRIVAL, &numberOfProgramsInArrivalTimeQueue);
 		PID = OperatingSystem_CreateProcess(i);
