@@ -327,6 +327,6 @@ char * Processor_ShowPSW(){
 //  New functions below this line  //////////////////////
 
 //Solo se añade una funcion que devuelve el registerb en todo la practica
-int Processor_GetRegisterB(){
+int Processor_RegisterB_CPU(){
 	return registerB_CPU;
 }

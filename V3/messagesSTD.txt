@@ -18,15 +18,8 @@
 113, [@G%d@@,%d]\n
 114, %s:\n
 115,Process [@G%d - %s@@] will transfer the control of the processor to process [@G%d - %s@@]\n
-
-//----------V2----------------
-
 120,@CClock interrupt number [%d] has occurred@@\n
-
-//----------V3---------------
 130,{%x %x %x} %s %d %d (PC: @R%d@@, Accumulator: @R%d@@, PSW: @R%x@@ [@R%s@@])\n
-
-//----------V4---------------
 140,Process [@R%d - %s@@] has caused an exception (@R%s@@) and is being terminated\n
 141,Process [@R%d - %s@@] has made an invalid system call (@R%s@@) and is being terminated\n
 142,Process [@Gd - %s@@] requests [@G%d@@] memory positions\n
