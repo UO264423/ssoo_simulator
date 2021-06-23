@@ -41,7 +41,7 @@ int OperatingSystem_GetExecutingProcessID();
 int OperatingSystem_InitializePartitionTable();
 void OperatingSystem_ShowPartitionTable();
 void OperatingSystem_ReleaseMainMemory();
-int Processor_RegisterB_CPU();
+int Processor_GetRegisterB();
 //------------finv4............
 //V1.10.a
 char * statesNames [5]={"NEW","READY","EXECUTING","BLOCKED","EXIT"};
@@ -567,7 +567,7 @@ void OperatingSystem_HandleException() {
 	//ComputerSystem_DebugMessage(71,SYSPROC,executingProcessID,programList[processTable[executingProcessID].programListIndex]->executableName);
 	
 	//Ejercicio V4.2
-	switch (Processor_RegisterB_CPU())
+	switch (Processor_GetRegisterB_CPU())
 	{
 	case INVALIDADDRESS://Ejercicio V4.2
 		ComputerSystem_DebugMessage(140, INTERRUPT, executingProcessID, programList[processTable[executingProcessID].programListIndex]->executableName, "invalid address");
