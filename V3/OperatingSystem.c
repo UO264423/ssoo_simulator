@@ -25,6 +25,7 @@ int OperatingSystem_ExtractFromReadyToRun();
 void OperatingSystem_HandleException();
 void OperatingSystem_HandleSystemCall();
 
+void OperatingSystem_PCBInitialization(int, int, int, int, int);
 void OperatingSystem_HandleClockInterrupt();
 
 void OperatingSystem_PrintReadyToRunQueue();
@@ -124,7 +125,7 @@ void OperatingSystem_Initialize(int daemonsIndex) {
 
 	// Create all user processes from the information given in the command line
 	//Se le asigna la variable en el ejercicio V1.15
-	OperatingSystem_LongTermScheduler();
+	int LTS = OperatingSystem_LongTermScheduler();
 	
 	if(numberOfProgramsInArrivalTimeQueue + numberOfNotTerminatedUserProcesses==0){
 		OperatingSystem_ReadyToShutdown();
@@ -177,10 +178,12 @@ int OperatingSystem_PrepareStudentsDaemons(int programListDaemonsBase) {
 int OperatingSystem_LongTermScheduler() {
 	
   
-	int PID, i,
-		numberOfSuccessfullyCreatedProcesses=0;
+	int PID, i, numberOfSuccessfullyCreatedProcesses=0;
 	
-	for (i=0; programList[i]!=NULL && i<PROGRAMSMAXNUMBER ; i++) {
+	//for (i=0; programList[i]!=NULL && i<PROGRAMSMAXNUMBER ; i++) {
+	while (OperatingSystem_IsThereANewProgram()){
+		//Ejercicio V3.3
+		i = Heap_poll(arrivalTimeQueue, QUEUE_ARRIVAL, &numberOfProgramsInArrivalTimeQueue);
 		PID = OperatingSystem_CreateProcess(i);
 		
 
@@ -189,7 +192,7 @@ int OperatingSystem_LongTermScheduler() {
 			//Ejercicio V2.1
 			OperatingSystem_ShowTime(ERROR);
 			ComputerSystem_DebugMessage(103,ERROR,programList[i]->executableName);
-			OperatingSystem_ReadyToShutdown();
+			//OperatingSystem_ReadyToShutdown();
 		}
 
 		//V1.5b
@@ -197,7 +200,7 @@ int OperatingSystem_LongTermScheduler() {
 			//Ejercicio V2.1
 			OperatingSystem_ShowTime(ERROR);
 			ComputerSystem_DebugMessage(104,ERROR,programList[i]->executableName, "it does not exist");
-			OperatingSystem_ReadyToShutdown();
+			//OperatingSystem_ReadyToShutdown();
 		}
 
 		//V1.5c
@@ -205,7 +208,7 @@ int OperatingSystem_LongTermScheduler() {
 			//Ejercicio V2.1
 			OperatingSystem_ShowTime(ERROR);
 			ComputerSystem_DebugMessage(104,ERROR,programList[i]->executableName, "invalid priority or size");
-			OperatingSystem_ReadyToShutdown();
+			//OperatingSystem_ReadyToShutdown();
 		}
 
 		//V1.6.B
@@ -213,7 +216,7 @@ int OperatingSystem_LongTermScheduler() {
 			//Ejercicio V2.1
 			OperatingSystem_ShowTime(ERROR);
 			ComputerSystem_DebugMessage(105,ERROR,programList[i]->executableName);
-			OperatingSystem_ReadyToShutdown();
+			//OperatingSystem_ReadyToShutdown();
 		}
 
 		//V4.6
@@ -236,7 +239,7 @@ int OperatingSystem_LongTermScheduler() {
 		}
 	}
 	//Ejercicio V2.7
-	if (numberOfSuccessfullyCreatedProcesses > 0 ){
+	if (numberOfSuccessfullyCreatedProcesses != 0 ){
 		OperatingSystem_PrintStatus();
 	}
 	// Return the number of succesfully created processes
@@ -345,17 +348,17 @@ int OperatingSystem_ObtainMainMemory(int processSize, int PID, int pos) { //int 
 	}
 	n = partitionsTable[actPart].initAddress;
 	OperatingSystem_ShowTime(SYSMEM);
-	ComputerSystem_DebugMessage(142, SYSMEM, PID, programList[pos]->executableName, processSize); // V4 - ejercicio6b
+	ComputerSystem_DebugMessage(142, SYSMEM, PID, programList[pos]->executableName, processSize);
 	
-	if(isOk){
+	if(isOk != 1){
 		return MEMORYFULL;
 	}
 	else if (actPart != -10){
-		return TOOBIGPROCESS;
-	}
-	else{
 		runningPartition = actPart;
 		return n;
+	}
+	else{
+		return TOOBIGPROCESS;
 	}
 }
 
@@ -465,6 +468,7 @@ void OperatingSystem_Dispatch(int PID) {
 
 // In OperatingSystem.c Exercise 2-b of V2
 void OperatingSystem_HandleClockInterrupt(){ 
+	numberOfClockInterrupts++;
 	//Ejercicio V2.4
 	OperatingSystem_ShowTime(INTERRUPT);
 	numberOfClockInterrupts = numberOfClockInterrupts+1;
@@ -497,8 +501,7 @@ void OperatingSystem_HandleClockInterrupt(){
 		OperatingSystem_PrintStatus();
 	}
 	//Ejercicio V2.6
-	if (locked){
-		if(numeroProcesosLargoPlazo>0){
+	if ( (locked + numeroProcesosLargoPlazo) > 0 ){
 			int new = Heap_getFirst(readyToRunQueue[USERPROCESSQUEUE], numberOfReadyToRunProcesses[USERPROCESSQUEUE]); 
 			if (OperatingSystem_CheckPriority(new)){
 				OperatingSystem_ShowTime(SHORTTERMSCHEDULE);
@@ -509,7 +512,6 @@ void OperatingSystem_HandleClockInterrupt(){
 				//Ejercicio V2.6
 				OperatingSystem_PrintStatus();
 			}
-		}
 	}
 } 
 
@@ -776,15 +778,17 @@ void OperatingSystem_PrintReadyToRunQueue(){
 
 	//Se comenta lo de arriba para el EJERCICIO 11.b
 	//Ejercicio V2.1
-	OperatingSystem_ShowTime(SYSPROC);
+	OperatingSystem_ShowTime(SHORTTERMSCHEDULE);
 	//Ready-to-run_processes_queue:
 	ComputerSystem_DebugMessage(106,SHORTTERMSCHEDULE);
-	for(int queue=0; queue < NUMBEROFQUEUES; queue++){
+	int queue;
+	for(queue=0; queue < NUMBEROFQUEUES; queue++){
 		//Comprobamos que la cola no esta vacia
 		if(numberOfReadyToRunProcesses[queue] != 0 ){ 
 			ComputerSystem_DebugMessage(112, SHORTTERMSCHEDULE, queueNames[queue]);
 			//Todos los elementos de la cola
-			for(int i=0;i<numberOfReadyToRunProcesses[queue];i++){
+			int i;
+			for(i=0;i<numberOfReadyToRunProcesses[queue];i++){
 				int priority = processTable[readyToRunQueue[queue][i].info].priority;
 
 				if(i==0){
