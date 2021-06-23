@@ -9,7 +9,7 @@
 #include "Wrappers.h"
 
 // Functions prototypes
-
+void ComputerSystem_PrintProgramList();
 // Array that contains basic data about all daemons
 // and all user programs specified in the command line
 PROGRAMS_DATA *programList[PROGRAMSMAXNUMBER];
@@ -38,23 +38,15 @@ void ComputerSystem_PowerOn(int argc, char *argv[], int paramIndex) {
 		exit(2);
 	}
 	nm=Messages_Load_Messages(nm,STUDENT_MESSAGES_FILE);
-
 	// Prepare if necesary the assert system
 	Asserts_LoadAsserts();
-
-	
 	//Ejercicio V1.2
 	ComputerSystem_PrintProgramList();
-
 	// Request the OS to do the initial set of tasks. The last one will be
 	// the processor allocation to the process with the highest priority
 	OperatingSystem_Initialize(daemonsBaseIndex);
-	
 	// Tell the processor to begin its instruction cycle 
 	Processor_InstructionCycleLoop();
-
-	
-	
 }
 
 // Powers off the CS (the C program ends)
@@ -74,7 +66,11 @@ void ComputerSystem_PrintProgramList(){
 	//Ejercicio V2.1
 	ComputerSystem_ShowTime(INIT);
 	ComputerSystem_DebugMessage(101,INIT,"User program list:\n");
-	for (int i=1; programList[i]!=NULL && i<PROGRAMSMAXNUMBER ; i++) {
-		ComputerSystem_DebugMessage(102,INIT,programList[i]->executableName,programList[i]->arrivalTime);
+	for (int i=1; i<PROGRAMSMAXNUMBER ; i++) {
+		if(programList[i]!=NULL){
+			ComputerSystem_DebugMessage(102,INIT,programList[i]->executableName,programList[i]->arrivalTime);
+		}else{
+			break;
+		}
 	}
 }

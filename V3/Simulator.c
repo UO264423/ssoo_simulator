@@ -105,7 +105,7 @@ int main(int argc, char *argv[]) {
 					break;
 				// case INTERVALBETWEENINTERRUPTS:
 				case intervalBetweenInterrupts_OPT:
-					if (optionValue==NULL || sscanf(optionValue,"%d",&intervalBetweenInterrupts)<1 || intervalBetweenInterrupts<5)
+					if (optionValue==NULL || sscanf(optionValue,"%d",&intervalBetweenInterrupts)<5)
 						intervalBetweenInterrupts=DEFAULT_INTERVAL_BETWEEN_INTERRUPTS;
 					break;
 				default :

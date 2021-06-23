@@ -19,6 +19,5 @@ void Clock_Update() {
 
 
 int Clock_GetTime() {
-
 	return tics;
 }

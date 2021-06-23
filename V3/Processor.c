@@ -8,6 +8,7 @@
 #include "Wrappers.h"
 
 // Internals Functions prototypes
+void Processor_RaiseException();
 void Processor_ManageInterrupts();
 int OperatingSystem_GetExecutingProcessID();
 
@@ -90,7 +91,8 @@ void Processor_DecodeAndExecuteInstruction() {
 	int operationCode=Processor_DecodeOperationCode(registerIR_CPU);
 	int operand1=Processor_DecodeOperand1(registerIR_CPU);
 	int operand2=Processor_DecodeOperand2(registerIR_CPU);
-	
+	//Ejercicio V3
+	int executingProcessID = OperatingSystem_GetExecutingProcessID();
 	Processor_DeactivatePSW_Bit(OVERFLOW_BIT);
 
 	// Execute
@@ -217,7 +219,7 @@ void Processor_DecodeAndExecuteInstruction() {
 				Processor_UpdatePSW();
 			}
 			else{
-				Processor_RaiseInterrupt(EXCEPTION_BIT);
+				//Processor_RaiseInterrupt(EXCEPTION_BIT);
 				Processor_RaiseException(INVALIDPROCESSORMODE);
 			}
 			break; // Note: message show before... for operating system messages after...
@@ -233,7 +235,6 @@ void Processor_DecodeAndExecuteInstruction() {
 				//Ejercicio V4.1
 				Processor_RaiseException(INVALIDPROCESSORMODE);
 			}
-			
 			break;	
 
 		// Instruction MEMADD (V1.0)
@@ -290,6 +291,7 @@ void Processor_ManageInterrupts() {
 				// Copy PC and PSW registers in the system stack
 				Processor_CopyInSystemStack(MAINMEMORYSIZE-1, registerPC_CPU);
 				Processor_CopyInSystemStack(MAINMEMORYSIZE-2, registerPSW_CPU);	
+				//-----------
 				Processor_CopyInSystemStack(MAINMEMORYSIZE-3, registerAccumulator_CPU);
 				//Ejercicio V2.3d
 				Processor_ActivatePSW_Bit(INTERRUPT_MASKED_BIT);

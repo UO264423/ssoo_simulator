@@ -30,5 +30,6 @@
 140,Process [@R%d - %s@@] has caused an exception (@R%s@@) and is being terminated\n
 141,Process [@R%d - %s@@] has made an invalid system call (@R%s@@) and is being terminated\n
 142,Process [@Gd - %s@@] requests [@G%d@@] memory positions\n
+143,Partition [@G%d@@: [@G%d@@ -> [@G%d@@] has been asignated to process [[@G%d@@ [@G- %s@@]\n
 144,@RERROR: A process could not be created from program [%s] because an appropiate partition is not available@@\n
-145,Partition [@G%d@@: [@G%d@@ -> [@G%d@@] used by process [[@G%d@@ [@G- %s@@] has been released
+145,Partition [@G%d@@: [@G%d@@ -> [@G%d@@] used by process [[@G%d@@ [@G- %s@@] has been released\n

@@ -26,7 +26,7 @@
 //V4.6
 #define MEMORYFULL -5 // In OperatingSystem.h
 
-// In OperatingSystem.h
+// In OperatingSystem.h - Ejercicio V2.11
 #define NUMBEROFQUEUES 2
 enum TypeOfReadyToRunProcessQueues { USERPROCESSQUEUE, DAEMONSQUEUE};
 
@@ -50,7 +50,7 @@ typedef struct {
 	int copyOfPCRegister;
 	unsigned int copyOfPSWRegister;
 	//Ejerccio V1.13
-	unsigned int copyOfAccumulator;
+	int copyOfAccumulator;
 	int programListIndex;
 	//Ejercicio V1.11a
 	int queueID;
@@ -70,8 +70,8 @@ void OperatingSystem_InterruptLogic(int);
 // void OperatingSystem_PrepareDaemons();
 int OperatingSystem_PrepareStudentsDaemons(int);
 void OperatingSystem_PrintReadyToRunQueue();
-void ComputerSystem_PrintProgramList();
+//void ComputerSystem_PrintProgramList();
 
-void OperatingSystem_AddBlockedQueue(int);
+//void OperatingSystem_AddBlockedQueue(int);
 
 #endif
